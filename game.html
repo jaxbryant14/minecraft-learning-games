@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #e3f2fd; margin: 0; padding: 0; }
+    .container { max-width: 400px; margin: 40px auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+    h2 { text-align: center; }
+    .token-info, .user-email { text-align: center; margin-bottom: 1em; }
+    .question { margin: 1em 0; }
+    input[type="text"] { padding: 0.5em; border: 1px solid #ccc; border-radius: 4px; width: 100%; }
+    button { padding: 0.7em; background: #1976d2; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-top: 1em; }
+    button:hover { background: #0d47a1; }
+    .result { text-align: center; margin: 1em 0; font-weight: bold; }
+    .back-link { display: block; text-align: center; margin-top: 1em; }
+    .error { color: #d32f2f; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container" id="game-container">
+    <h2>Multiplication Game</h2>
+    <div class="user-email" id="user-email"></div>
+    <div class="token-info">coins: <span id="token-count"></span></div>
+    <div id="game-area">
+      <div class="question" id="question"></div>
+      <form id="answer-form">
+        <input type="text" id="answer" placeholder="Your answer" required />
+        <button type="submit">Submit</button>
+      </form>
+      <div class="result" id="result"></div>
+    </div>
+    <a class="back-link" href="index.html">Back to home</a>
+  </div>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script src="js/token-manager.js"></script>
+  <script>
+    // Token management using cross-device API with localStorage fallback
+    async function getTokenCount(email) {
+      return await window.tokenManager.getTokens(email);
+    }
+    
+    async function setTokenCount(email, count) {
+      return await window.tokenManager.setTokens(email, count);
+    }
+    
+    function updateTokenDisplay(email) {
+      window.tokenManager.updateTokenDisplay(email);
+    }
+
+    // Multiplication question generator
+    function randomQuestion() {
+      const a = Math.floor(Math.random() * 10) + 1;
+      const b = Math.floor(Math.random() * 10) + 1;
+      return { a, b, answer: a * b };
+    }
+
+    // Game logic
+    let currentUser = null;
+    let currentQuestion = null;
+    let currentEmail = null;
+
+    async function showGame(email) {
+      document.getElementById('game-container').style.display = '';
+      if (email) {
+        document.getElementById('user-email').textContent = 'Logged in as: ' + email;
+      } else {
+        document.getElementById('user-email').textContent = 'Playing as Guest';
+      }
+      updateTokenDisplay(email);
+      await startNewRound(email);
+    }
+
+    async function startNewRound(email) {
+      let tokens = await getTokenCount(email);
+      if (tokens < 1) {
+        document.getElementById('game-area').innerHTML = '<div class="result">Not enough tokens to play. <a href="index.html">Back</a></div>';
+        return;
+      }
+      // Deduct 1 token to play
+      tokens -= 1;
+      await setTokenCount(email, tokens);
+      updateTokenDisplay(email);
+      currentQuestion = randomQuestion();
+      document.getElementById('question').textContent = `What is ${currentQuestion.a} × ${currentQuestion.b}?`;
+      document.getElementById('answer').value = '';
+      document.getElementById('result').textContent = '';
+    }
+
+    document.getElementById('answer-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const answer = parseInt(document.getElementById('answer').value.trim(), 10);
+      if (answer === currentQuestion.answer) {
+        let tokens = await getTokenCount(currentEmail) + 2;
+        await setTokenCount(currentEmail, tokens);
+        updateTokenDisplay(currentEmail);
+        document.getElementById('result').textContent = 'Correct! You earned 2 tokens!';
+        setTimeout(() => startNewRound(currentEmail), 1200);
+      } else {
+        document.getElementById('result').textContent = 'Incorrect. Try again!';
+      }
+    };
+
+    // Netlify Identity integration (optional)
+    function checkAuth() {
+      const user = netlifyIdentity.currentUser();
+      if (user) {
+        currentUser = user;
+        currentEmail = user.email;
+      } else {
+        currentUser = null;
+        currentEmail = null;
+      }
+      showGame(currentEmail);
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+      if (window.netlifyIdentity) {
+        netlifyIdentity.on("login", user => {
+          currentUser = user;
+          currentEmail = user.email;
+          showGame(currentEmail);
+        });
+        netlifyIdentity.on("logout", () => {
+          currentUser = null;
+          currentEmail = null;
+          showGame(currentEmail);
+        });
+        netlifyIdentity.on("init", () => {
+          checkAuth();
+        });
+        netlifyIdentity.init();
+      }
+      checkAuth();
+    });
+  </script>
+</body>
+</html> 

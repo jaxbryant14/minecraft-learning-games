@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token Debug Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+    button { padding: 10px; margin: 5px; }
+    .result { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>Token System Debug Test</h1>
+  
+  <div class="test-section">
+    <h3>Test 1: Check if Token Manager Loads</h3>
+    <button onclick="testTokenManager()">Test Token Manager</button>
+    <div id="result1" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h3>Test 2: Test API Endpoint</h3>
+    <button onclick="testAPI()">Test API</button>
+    <div id="result2" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <h3>Test 3: Test Token Operations</h3>
+    <input type="email" id="testEmail" placeholder="Enter email" value="test@example.com">
+    <button onclick="testTokens()">Test Tokens</button>
+    <div id="result3" class="result"></div>
+  </div>
+
+  <script src="js/token-manager.js"></script>
+  <script>
+    function testTokenManager() {
+      const result = document.getElementById('result1');
+      if (window.tokenManager) {
+        result.innerHTML = '✅ Token Manager loaded successfully!';
+      } else {
+        result.innerHTML = '❌ Token Manager not found!';
+      }
+    }
+
+    async function testAPI() {
+      const result = document.getElementById('result2');
+      result.innerHTML = '🔄 Testing API...';
+      
+      try {
+        const response = await fetch('/.netlify/functions/tokens?email=test@example.com', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          result.innerHTML = `✅ API working! Response: ${JSON.stringify(data)}`;
+        } else {
+          result.innerHTML = `❌ API error: ${response.status} ${response.statusText}`;
+        }
+      } catch (error) {
+        result.innerHTML = `❌ API failed: ${error.message}`;
+      }
+    }
+
+    async function testTokens() {
+      const result = document.getElementById('result3');
+      const email = document.getElementById('testEmail').value;
+      
+      if (!email) {
+        result.innerHTML = '❌ Please enter an email';
+        return;
+      }
+
+      result.innerHTML = '🔄 Testing token operations...';
+      
+      try {
+        // Test getting tokens
+        const tokens = await window.tokenManager.getTokens(email);
+        result.innerHTML += `<br>✅ Got tokens: ${tokens}`;
+        
+        // Test setting tokens
+        const newTokens = tokens + 5;
+        await window.tokenManager.setTokens(email, newTokens);
+        result.innerHTML += `<br>✅ Set tokens to: ${newTokens}`;
+        
+        // Test getting tokens again
+        const finalTokens = await window.tokenManager.getTokens(email);
+        result.innerHTML += `<br>✅ Final tokens: ${finalTokens}`;
+        
+      } catch (error) {
+        result.innerHTML += `<br>❌ Error: ${error.message}`;
+      }
+    }
+  </script>
+</body>
+</html> 

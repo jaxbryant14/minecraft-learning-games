@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coding Game - JavaScript Only</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+    h2 { text-align: center; }
+    .desc { text-align: center; margin-bottom: 1.5em; }
+    .editor-label { margin-bottom: 0.5em; font-weight: bold; }
+    .examples-label { font-weight: bold; margin-bottom: 0.3em; }
+    .examples-select { width: 100%; margin-bottom: 1em; padding: 0.5em; font-size: 1em; border-radius: 6px; border: 1px solid #bbb; }
+    textarea { width: 100%; height: 180px; font-family: 'Fira Mono', 'Consolas', monospace; font-size: 1em; border-radius: 6px; border: 1px solid #bbb; padding: 1em; margin-bottom: 1em; }
+    .run-btn { padding: 0.7em 2em; font-size: 1.1em; border: none; border-radius: 6px; cursor: pointer; background: #1976d2; color: #fff; transition: background 0.2s; display: block; margin: 0 auto 1em auto; }
+    .run-btn:hover { background: #0d47a1; }
+    .output-label { font-weight: bold; margin-bottom: 0.3em; }
+    .output-area { background: #222; color: #fff; border-radius: 6px; padding: 1em; min-height: 2em; font-family: 'Fira Mono', 'Consolas', monospace; white-space: pre-wrap; margin-bottom: 1em; }
+    .back-link { display: block; text-align: center; margin-top: 2em; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Coding Game: JavaScript Version</h2>
+    <div class="desc">
+      Type your JavaScript code below and click "Run Code" to see the output!
+    </div>
+    <div class="examples-label">Examples:</div>
+    <select id="examples" class="examples-select">
+      <option value="">-- Select an example --</option>
+      <option value="hello">Hello World</option>
+      <option value="add">Add Two Numbers</option>
+      <option value="loop">Simple Loop</option>
+    </select>
+    <div class="editor-label">JavaScript Code:</div>
+    <textarea id="code-input">console.log('Hello, world!');</textarea>
+    <button class="run-btn" id="run-btn">Run Code</button>
+    <div class="output-label">Output:</div>
+    <div class="output-area" id="output"></div>
+    <a class="back-link" href="index.html">Back to Main Page</a>
+  </div>
+  <script>
+    const examples = {
+      hello: "console.log('Hello, world!');",
+      add: "let a = 5;\nlet b = 7;\nconsole.log('The sum is', a + b);",
+      loop: "for (let i = 1; i <= 5; i++) {\n  console.log('Number:', i);\n}"
+    };
+    document.getElementById('examples').onchange = function() {
+      const val = this.value;
+      if (examples[val]) {
+        document.getElementById('code-input').value = examples[val];
+      }
+    };
+    document.getElementById('run-btn').onclick = function() {
+      const code = document.getElementById('code-input').value;
+      const outputDiv = document.getElementById('output');
+      let output = '';
+      // Capture console.log
+      const originalLog = console.log;
+      console.log = function(...args) {
+        output += args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') + '\n';
+        originalLog.apply(console, args);
+      };
+      try {
+        // eslint-disable-next-line no-eval
+        eval(code);
+      } catch (e) {
+        output += 'Error: ' + e.message + '\n';
+      }
+      console.log = originalLog;
+      outputDiv.textContent = output || '(No output)';
+    };
+  </script>
+</body>
+</html> 

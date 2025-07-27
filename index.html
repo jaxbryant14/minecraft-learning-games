@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Game Portal</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    .container { max-width: 400px; margin: 40px auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+    h2 { text-align: center; }
+    .token-info { text-align: center; margin: 1em 0; }
+    .game-link { display: block; text-align: center; margin-top: 1em; }
+    .user-email { text-align: center; color: #555; margin-bottom: 1em; }
+    #signout-btn, #auth-btn { width: 100%; margin-top: 1em; }
+    .error { color: #d32f2f; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container" id="passcode-container">
+    <h2>Enter Passcode</h2>
+    <form id="passcode-form">
+      <input type="password" id="passcode-input" placeholder="Passcode" required />
+      <button type="submit">Enter</button>
+    </form>
+    <div class="error" id="passcode-error"></div>
+  </div>
+  <div class="container" id="app-container" style="display:none;">
+    <h2>Welcome to the Learning Game Portal!</h2>
+    <div class="user-email" id="user-email"></div>
+    <div class="token-info">Tokens: <span id="token-count"></span></div>
+    <a class="game-link" href="game.html">Play Learning Game</a>
+    <a class="game-link" href="coding-game.html">Play Coding Game (Create a Template in JS, Python, or Scratch)</a>
+    <button id="signout-btn" style="display:none;">Sign Out</button>
+    <button id="auth-btn">Sign Up / Sign In</button>
+  </div>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script src="js/token-manager.js"></script>
+  <script>
+    // Passcode logic
+    const PASSCODE = '1002';
+    function showPasscode() {
+      document.getElementById('passcode-container').style.display = '';
+      document.getElementById('app-container').style.display = 'none';
+    }
+    function showApp() {
+      document.getElementById('passcode-container').style.display = 'none';
+      document.getElementById('app-container').style.display = '';
+    }
+    document.getElementById('passcode-form').onsubmit = function(e) {
+      e.preventDefault();
+      const input = document.getElementById('passcode-input').value;
+      if (input === PASSCODE) {
+        sessionStorage.setItem('passcodeOK', '1');
+        document.getElementById('passcode-error').textContent = '';
+        tryShowApp();
+      } else {
+        document.getElementById('passcode-error').textContent = 'Incorrect passcode.';
+      }
+    };
+
+    // Token management using cross-device API with localStorage fallback
+    async function getTokenCount(email) {
+      return await window.tokenManager.getTokens(email);
+    }
+    
+    async function setTokenCount(email, count) {
+      return await window.tokenManager.setTokens(email, count);
+    }
+    
+    function updateTokenDisplay(email) {
+      window.tokenManager.updateTokenDisplay(email);
+    }
+
+    // Netlify Identity integration
+    async function tryShowApp() {
+      if (sessionStorage.getItem('passcodeOK') !== '1') {
+        showPasscode();
+        return;
+      }
+      const user = netlifyIdentity.currentUser();
+      if (user) {
+        showApp();
+        document.getElementById('user-email').textContent = 'Logged in as: ' + user.email;
+        document.getElementById('auth-btn').style.display = 'none';
+        document.getElementById('signout-btn').style.display = '';
+        updateTokenDisplay(user.email);
+      } else {
+        showApp();
+        document.getElementById('user-email').textContent = 'Not signed in.';
+        document.getElementById('auth-btn').style.display = '';
+        document.getElementById('signout-btn').style.display = 'none';
+        document.getElementById('token-count').textContent = '-';
+      }
+    }
+
+    document.getElementById('auth-btn').onclick = function() {
+      netlifyIdentity.open();
+    };
+    document.getElementById('signout-btn').onclick = function() {
+      netlifyIdentity.logout();
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+      if (window.netlifyIdentity) {
+        netlifyIdentity.on("login", user => {
+          tryShowApp();
+        });
+        netlifyIdentity.on("logout", () => {
+          tryShowApp();
+        });
+        netlifyIdentity.on("init", () => {
+          tryShowApp();
+        });
+        netlifyIdentity.init();
+      }
+      tryShowApp();
+    });
+  </script>
+</body>
+</html> 

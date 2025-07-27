@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clear Storage Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+    button { padding: 10px; margin: 5px; }
+    .result { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>Cross-Device Token Test</h1>
+  
+  <div class="section">
+    <h3>Step 1: Clear Local Storage</h3>
+    <button onclick="clearStorage()">Clear All Local Storage</button>
+    <div id="clearResult" class="result"></div>
+  </div>
+
+  <div class="section">
+    <h3>Step 2: Test Server Connection</h3>
+    <input type="email" id="testEmail" placeholder="Enter your email" value="">
+    <button onclick="testServer()">Test Server Connection</button>
+    <div id="serverResult" class="result"></div>
+  </div>
+
+  <div class="section">
+    <h3>Step 3: Test Token Sync</h3>
+    <button onclick="testTokenSync()">Test Token Sync</button>
+    <div id="syncResult" class="result"></div>
+  </div>
+
+  <div class="section">
+    <h3>Current Local Storage</h3>
+    <button onclick="showStorage()">Show Local Storage</button>
+    <div id="storageResult" class="result"></div>
+  </div>
+
+  <script src="js/token-manager.js"></script>
+  <script>
+    function clearStorage() {
+      const result = document.getElementById('clearResult');
+      try {
+        localStorage.clear();
+        result.innerHTML = '✅ Local storage cleared!';
+      } catch (error) {
+        result.innerHTML = '❌ Error clearing storage: ' + error.message;
+      }
+    }
+
+    async function testServer() {
+      const result = document.getElementById('serverResult');
+      const email = document.getElementById('testEmail').value;
+      
+      if (!email) {
+        result.innerHTML = '❌ Please enter an email';
+        return;
+      }
+
+      result.innerHTML = '🔄 Testing server connection...';
+      
+      try {
+        // Test direct API call
+        const response = await fetch(`/.netlify/functions/tokens?email=${encodeURIComponent(email)}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          result.innerHTML = `✅ Server working! Current tokens: ${data.tokens}`;
+        } else {
+          result.innerHTML = `❌ Server error: ${response.status} ${response.statusText}`;
+        }
+      } catch (error) {
+        result.innerHTML = `❌ Server failed: ${error.message}`;
+      }
+    }
+
+    async function testTokenSync() {
+      const result = document.getElementById('syncResult');
+      const email = document.getElementById('testEmail').value;
+      
+      if (!email) {
+        result.innerHTML = '❌ Please enter an email';
+        return;
+      }
+
+      result.innerHTML = '🔄 Testing token sync...';
+      
+      try {
+        // Get tokens from server (should ignore localStorage)
+        const tokens = await window.tokenManager.getTokens(email);
+        result.innerHTML = `✅ Got tokens from server: ${tokens}`;
+        
+        // Set new tokens
+        const newTokens = tokens + 10;
+        await window.tokenManager.setTokens(email, newTokens);
+        result.innerHTML += `<br>✅ Set tokens to: ${newTokens}`;
+        
+        // Get tokens again
+        const finalTokens = await window.tokenManager.getTokens(email);
+        result.innerHTML += `<br>✅ Final tokens: ${finalTokens}`;
+        
+      } catch (error) {
+        result.innerHTML = `❌ Error: ${error.message}`;
+      }
+    }
+
+    function showStorage() {
+      const result = document.getElementById('storageResult');
+      const storage = {};
+      
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        storage[key] = localStorage.getItem(key);
+      }
+      
+      result.innerHTML = '<strong>Local Storage Contents:</strong><br>' + 
+                        JSON.stringify(storage, null, 2);
+    }
+  </script>
+</body>
+</html> 
