@@ -1,35 +1,15 @@
-const fs = require('fs').promises;
-const path = require('path');
+// In-memory storage for tokens (will reset when function restarts)
+let tokenStorage = {};
 
-// Simple file-based database for tokens
-const TOKENS_FILE = path.join(__dirname, '../../data/tokens.json');
-
-// Ensure data directory exists
-async function ensureDataDir() {
-  const dataDir = path.dirname(TOKENS_FILE);
-  try {
-    await fs.access(dataDir);
-  } catch {
-    await fs.mkdir(dataDir, { recursive: true });
-  }
+// Load tokens from memory
+function loadTokens() {
+  return tokenStorage;
 }
 
-// Load tokens from file
-async function loadTokens() {
-  try {
-    await ensureDataDir();
-    const data = await fs.readFile(TOKENS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    // If file doesn't exist, return empty object
-    return {};
-  }
-}
-
-// Save tokens to file
-async function saveTokens(tokens) {
-  await ensureDataDir();
-  await fs.writeFile(TOKENS_FILE, JSON.stringify(tokens, null, 2));
+// Save tokens to memory
+function saveTokens(tokens) {
+  tokenStorage = tokens;
+  return true;
 }
 
 exports.handler = async function(event, context) {
@@ -69,7 +49,7 @@ exports.handler = async function(event, context) {
       };
     }
 
-    const tokens = await loadTokens();
+    const tokens = loadTokens();
 
     if (event.httpMethod === 'GET') {
       // Get tokens for user
@@ -101,7 +81,7 @@ exports.handler = async function(event, context) {
       console.log('🔄 Updated tokens object:', tokens);
       
       try {
-        await saveTokens(tokens);
+        saveTokens(tokens);
         console.log('✅ Tokens saved successfully');
       } catch (saveError) {
         console.error('❌ Error saving tokens:', saveError);
