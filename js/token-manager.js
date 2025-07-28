@@ -23,6 +23,7 @@ class TokenManager {
 
       const data = await response.json();
       console.log('✅ Tokens fetched from server:', data.tokens);
+      console.log('🔄 Server response data:', data);
       return data.tokens;
     } catch (error) {
       console.error('❌ Error fetching tokens:', error);
@@ -52,6 +53,7 @@ class TokenManager {
 
       const data = await response.json();
       console.log('✅ Tokens saved to server:', data.tokens);
+      console.log('🔄 Expected tokens:', count, 'Server returned:', data.tokens);
       // Also update localStorage as backup
       this.setLocalTokens(email, count);
       return data.tokens;
