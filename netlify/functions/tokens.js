@@ -73,7 +73,10 @@ exports.handler = async function(event, context) {
 
     if (event.httpMethod === 'GET') {
       // Get tokens for user
+      console.log('🔄 GET request - email:', email);
+      console.log('🔄 All tokens from file:', tokens);
       const userTokens = tokens[email] || 10; // Default 10 tokens for new users
+      console.log('🔄 User tokens for', email, ':', userTokens);
       return {
         statusCode: 200,
         headers,
@@ -82,6 +85,9 @@ exports.handler = async function(event, context) {
     } else if (event.httpMethod === 'POST') {
       // Update tokens for user
       const { tokens: newTokenCount } = JSON.parse(event.body);
+      
+      console.log('🔄 POST request - email:', email, 'newTokenCount:', newTokenCount);
+      console.log('🔄 Current tokens before update:', tokens);
       
       if (typeof newTokenCount !== 'number' || newTokenCount < 0) {
         return {
@@ -92,7 +98,19 @@ exports.handler = async function(event, context) {
       }
 
       tokens[email] = newTokenCount;
-      await saveTokens(tokens);
+      console.log('🔄 Updated tokens object:', tokens);
+      
+      try {
+        await saveTokens(tokens);
+        console.log('✅ Tokens saved successfully');
+      } catch (saveError) {
+        console.error('❌ Error saving tokens:', saveError);
+        return {
+          statusCode: 500,
+          headers,
+          body: JSON.stringify({ error: 'Failed to save tokens' })
+        };
+      }
 
       return {
         statusCode: 200,
