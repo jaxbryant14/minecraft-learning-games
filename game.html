@@ -74,12 +74,14 @@
 
     async function startNewRound(email) {
       let tokens = await getTokenCount(email);
+      console.log('🔄 Starting new round with tokens:', tokens);
       if (tokens < 1) {
         document.getElementById('game-area').innerHTML = '<div class="result">Not enough tokens to play. <a href="index.html">Back</a></div>';
         return;
       }
       // Deduct 1 token to play
       tokens -= 1;
+      console.log('🔄 Deducting 1 token, new total:', tokens);
       await setTokenCount(email, tokens);
       updateTokenDisplay(email);
       currentQuestion = randomQuestion();
@@ -92,8 +94,10 @@
       e.preventDefault();
       const answer = parseInt(document.getElementById('answer').value.trim(), 10);
       if (answer === currentQuestion.answer) {
-        let tokens = await getTokenCount(currentEmail) + 2;
-        await setTokenCount(currentEmail, tokens);
+        let currentTokens = await getTokenCount(currentEmail);
+        let newTokens = currentTokens + 2;
+        console.log('✅ Correct answer! Current tokens:', currentTokens, 'Adding 2, new total:', newTokens);
+        await setTokenCount(currentEmail, newTokens);
         updateTokenDisplay(currentEmail);
         document.getElementById('result').textContent = 'Correct! You earned 2 tokens!';
         setTimeout(() => startNewRound(currentEmail), 1200);
