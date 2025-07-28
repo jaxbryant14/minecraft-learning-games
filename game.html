@@ -92,8 +92,10 @@
 
     document.getElementById('answer-form').onsubmit = async function(e) {
       e.preventDefault();
+      console.log('🔄 Form submitted, currentEmail:', currentEmail);
       const answer = parseInt(document.getElementById('answer').value.trim(), 10);
       if (answer === currentQuestion.answer) {
+        console.log('✅ Answer correct! currentEmail:', currentEmail);
         let currentTokens = await getTokenCount(currentEmail);
         let newTokens = currentTokens + 2;
         console.log('✅ Correct answer! Current tokens:', currentTokens, 'Adding 2, new total:', newTokens);
@@ -109,12 +111,15 @@
     // Netlify Identity integration (optional)
     function checkAuth() {
       const user = netlifyIdentity.currentUser();
+      console.log('🔄 Checking auth, user:', user);
       if (user) {
         currentUser = user;
         currentEmail = user.email;
+        console.log('✅ User authenticated:', currentEmail);
       } else {
         currentUser = null;
         currentEmail = null;
+        console.log('❌ No user authenticated');
       }
       showGame(currentEmail);
     }
