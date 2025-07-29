@@ -154,6 +154,18 @@
         <div class="game-description">Slide tiles to arrange numbers in order!</div>
         <div class="game-cost">Cost: 3 tokens</div>
       </div>
+      
+      <div class="game-card" onclick="startGame('flappy', 4)">
+        <div class="game-title">🐦 Flappy Bird</div>
+        <div class="game-description">Navigate through pipes with spacebar!</div>
+        <div class="game-cost">Cost: 4 tokens</div>
+      </div>
+      
+      <div class="game-card" onclick="startGame('breakout', 6)">
+        <div class="game-title">🏓 Breakout</div>
+        <div class="game-description">Break all the blocks with your paddle!</div>
+        <div class="game-cost">Cost: 6 tokens</div>
+      </div>
     </div>
     
     <a class="back-link" href="index.html">← Back to Main Menu</a>
@@ -183,7 +195,9 @@
     const gameCosts = {
       snake: 5,
       tetris: 10,
-      puzzle: 3
+      puzzle: 3,
+      flappy: 4,
+      breakout: 6
     };
 
     async function getTokenCount(email) {
@@ -227,7 +241,9 @@
       const titles = {
         snake: '🐍 Snake Game',
         tetris: '🧩 Tetris',
-        puzzle: '🧩 Number Puzzle'
+        puzzle: '🧩 Number Puzzle',
+        flappy: '🐦 Flappy Bird',
+        breakout: '🏓 Breakout'
       };
       return titles[gameType] || 'Game';
     }
@@ -245,6 +261,10 @@
         initTetrisGame(ctx, canvas);
       } else if (gameType === 'puzzle') {
         initPuzzleGame(ctx, canvas);
+      } else if (gameType === 'flappy') {
+        initFlappyGame(ctx, canvas);
+      } else if (gameType === 'breakout') {
+        initBreakoutGame(ctx, canvas);
       }
     }
 
@@ -307,7 +327,9 @@
           }
         }
         
-        setTimeout(gameLoop, 100);
+        // Speed up as score increases
+        const speed = Math.max(50, 150 - Math.floor(gameScore / 10) * 10);
+        setTimeout(gameLoop, speed);
       }
       
       document.addEventListener('keydown', (e) => {
@@ -320,20 +342,579 @@
       gameLoop();
     }
 
+    function initBreakoutGame(ctx, canvas) {
+      const paddle = {
+        x: canvas.width / 2 - 50,
+        y: canvas.height - 30,
+        width: 100,
+        height: 10
+      };
+      
+      const ball = {
+        x: canvas.width / 2,
+        y: canvas.height - 50,
+        radius: 5,
+        dx: 3,
+        dy: -3
+      };
+      
+      let blocks = [];
+      let gameScore = 0;
+      gameRunning = true;
+      
+      // Initialize blocks
+      function initBlocks() {
+        blocks = [];
+        const rows = 5;
+        const cols = 8;
+        const blockWidth = canvas.width / cols;
+        const blockHeight = 20;
+        
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            blocks.push({
+              x: col * blockWidth,
+              y: row * blockHeight + 50,
+              width: blockWidth - 2,
+              height: blockHeight - 2,
+              color: `hsl(${row * 60}, 70%, 60%)`
+            });
+          }
+        }
+      }
+      
+      function drawPaddle() {
+        ctx.fillStyle = '#1976d2';
+        ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+      }
+      
+      function drawBall() {
+        ctx.fillStyle = '#FF5722';
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      function drawBlocks() {
+        blocks.forEach(block => {
+          ctx.fillStyle = block.color;
+          ctx.fillRect(block.x, block.y, block.width, block.height);
+        });
+      }
+      
+      function updateBall() {
+        ball.x += ball.dx;
+        ball.y += ball.dy;
+        
+        // Wall collision
+        if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
+          ball.dx = -ball.dx;
+        }
+        if (ball.y - ball.radius < 0) {
+          ball.dy = -ball.dy;
+        }
+        
+        // Paddle collision
+        if (ball.y + ball.radius > paddle.y && 
+            ball.x > paddle.x && 
+            ball.x < paddle.x + paddle.width) {
+          ball.dy = -ball.dy;
+          // Adjust ball direction based on where it hits the paddle
+          const hitPos = (ball.x - paddle.x) / paddle.width;
+          ball.dx = (hitPos - 0.5) * 6;
+        }
+        
+        // Block collision
+        blocks.forEach((block, index) => {
+          if (ball.x + ball.radius > block.x && 
+              ball.x - ball.radius < block.x + block.width &&
+              ball.y + ball.radius > block.y && 
+              ball.y - ball.radius < block.y + block.height) {
+            
+            ball.dy = -ball.dy;
+            blocks.splice(index, 1);
+            gameScore += 10;
+          }
+        });
+      }
+      
+      function updatePaddle() {
+        // Mouse/touch control
+        canvas.addEventListener('mousemove', (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          paddle.x = mouseX - paddle.width / 2;
+          
+          // Keep paddle within bounds
+          if (paddle.x < 0) paddle.x = 0;
+          if (paddle.x + paddle.width > canvas.width) {
+            paddle.x = canvas.width - paddle.width;
+          }
+        });
+      }
+      
+      function gameLoop() {
+        if (!gameRunning) return;
+        
+        // Clear canvas
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        updateBall();
+        updatePaddle();
+        
+        // Check if ball is lost
+        if (ball.y + ball.radius > canvas.height) {
+          gameOver();
+          return;
+        }
+        
+        // Check if all blocks are destroyed
+        if (blocks.length === 0) {
+          gameScore += 500; // Bonus for completing level
+          setTimeout(() => {
+            alert(`Level Complete! Score: ${gameScore}`);
+            gameOver();
+          }, 500);
+          return;
+        }
+        
+        drawBlocks();
+        drawPaddle();
+        drawBall();
+        
+        document.getElementById('game-score').textContent = `Score: ${gameScore}`;
+        
+        requestAnimationFrame(gameLoop);
+      }
+      
+      initBlocks();
+      gameLoop();
+    }
+
     function initTetrisGame(ctx, canvas) {
-      // Simple tetris implementation
-      ctx.fillStyle = '#2196F3';
-      ctx.font = '20px Arial';
-      ctx.fillText('Tetris Game Coming Soon!', 100, 200);
-      ctx.fillText('Use arrow keys to move', 100, 230);
+      const BLOCK_SIZE = 20;
+      const COLS = canvas.width / BLOCK_SIZE;
+      const ROWS = canvas.height / BLOCK_SIZE;
+      
+      let board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+      let currentPiece = null;
+      let gameScore = 0;
+      gameRunning = true;
+      
+      // Tetris pieces
+      const PIECES = [
+        [[1,1,1,1]], // I
+        [[1,1],[1,1]], // O
+        [[1,1,1],[0,1,0]], // T
+        [[1,1,1],[1,0,0]], // L
+        [[1,1,1],[0,0,1]], // J
+        [[1,1,0],[0,1,1]], // S
+        [[0,1,1],[1,1,0]]  // Z
+      ];
+      
+      function createPiece() {
+        const piece = PIECES[Math.floor(Math.random() * PIECES.length)];
+        return {
+          shape: piece,
+          x: Math.floor(COLS / 2) - Math.floor(piece[0].length / 2),
+          y: 0
+        };
+      }
+      
+      function drawBoard() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        for (let y = 0; y < ROWS; y++) {
+          for (let x = 0; x < COLS; x++) {
+            if (board[y][x]) {
+              ctx.fillStyle = '#2196F3';
+              ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+            }
+          }
+        }
+      }
+      
+      function drawPiece(piece) {
+        ctx.fillStyle = '#FF5722';
+        for (let y = 0; y < piece.shape.length; y++) {
+          for (let x = 0; x < piece.shape[y].length; x++) {
+            if (piece.shape[y][x]) {
+              ctx.fillRect((piece.x + x) * BLOCK_SIZE, (piece.y + y) * BLOCK_SIZE, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+            }
+          }
+        }
+      }
+      
+      function isValid(piece, dx = 0, dy = 0) {
+        for (let y = 0; y < piece.shape.length; y++) {
+          for (let x = 0; x < piece.shape[y].length; x++) {
+            if (piece.shape[y][x]) {
+              const newX = piece.x + x + dx;
+              const newY = piece.y + y + dy;
+              if (newX < 0 || newX >= COLS || newY >= ROWS || (newY >= 0 && board[newY][newX])) {
+                return false;
+              }
+            }
+          }
+        }
+        return true;
+      }
+      
+      function placePiece(piece) {
+        for (let y = 0; y < piece.shape.length; y++) {
+          for (let x = 0; x < piece.shape[y].length; x++) {
+            if (piece.shape[y][x]) {
+              board[piece.y + y][piece.x + x] = 1;
+            }
+          }
+        }
+      }
+      
+      function clearLines() {
+        let linesCleared = 0;
+        for (let y = ROWS - 1; y >= 0; y--) {
+          if (board[y].every(cell => cell)) {
+            board.splice(y, 1);
+            board.unshift(Array(COLS).fill(0));
+            linesCleared++;
+            y++;
+          }
+        }
+        if (linesCleared > 0) {
+          gameScore += linesCleared * 100;
+        }
+      }
+      
+      function gameLoop() {
+        if (!gameRunning) return;
+        
+        if (!currentPiece) {
+          currentPiece = createPiece();
+          if (!isValid(currentPiece)) {
+            gameOver();
+            return;
+          }
+        }
+        
+        if (isValid(currentPiece, 0, 1)) {
+          currentPiece.y++;
+        } else {
+          placePiece(currentPiece);
+          clearLines();
+          currentPiece = null;
+        }
+        
+        drawBoard();
+        if (currentPiece) {
+          drawPiece(currentPiece);
+        }
+        
+        document.getElementById('game-score').textContent = `Score: ${gameScore}`;
+        
+        setTimeout(gameLoop, 500);
+      }
+      
+      document.addEventListener('keydown', (e) => {
+        if (!currentPiece) return;
+        
+        if (e.key === 'ArrowLeft' && isValid(currentPiece, -1, 0)) {
+          currentPiece.x--;
+        } else if (e.key === 'ArrowRight' && isValid(currentPiece, 1, 0)) {
+          currentPiece.x++;
+        } else if (e.key === 'ArrowDown' && isValid(currentPiece, 0, 1)) {
+          currentPiece.y++;
+        } else if (e.key === 'ArrowUp') {
+          // Rotate piece
+          const rotated = [];
+          for (let x = 0; x < currentPiece.shape[0].length; x++) {
+            rotated[x] = [];
+            for (let y = currentPiece.shape.length - 1; y >= 0; y--) {
+              rotated[x][currentPiece.shape.length - 1 - y] = currentPiece.shape[y][x];
+            }
+          }
+          const originalShape = currentPiece.shape;
+          currentPiece.shape = rotated;
+          if (!isValid(currentPiece)) {
+            currentPiece.shape = originalShape;
+          }
+        }
+      });
+      
+      gameLoop();
     }
 
     function initPuzzleGame(ctx, canvas) {
-      // Simple puzzle implementation
-      ctx.fillStyle = '#9C27B0';
-      ctx.font = '20px Arial';
-      ctx.fillText('Number Puzzle Coming Soon!', 80, 200);
-      ctx.fillText('Slide tiles to arrange numbers', 80, 230);
+      const TILE_SIZE = 80;
+      const GRID_SIZE = 3;
+      const BOARD_SIZE = TILE_SIZE * GRID_SIZE;
+      
+      let tiles = [];
+      let emptyPos = { x: GRID_SIZE - 1, y: GRID_SIZE - 1 };
+      let gameScore = 0;
+      let moves = 0;
+      gameRunning = true;
+      
+      // Initialize tiles
+      function initTiles() {
+        tiles = [];
+        for (let i = 0; i < GRID_SIZE * GRID_SIZE - 1; i++) {
+          tiles.push(i + 1);
+        }
+        tiles.push(0); // Empty tile
+        shuffleTiles();
+      }
+      
+      function shuffleTiles() {
+        for (let i = tiles.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+        }
+        // Find empty position
+        const emptyIndex = tiles.indexOf(0);
+        emptyPos.x = emptyIndex % GRID_SIZE;
+        emptyPos.y = Math.floor(emptyIndex / GRID_SIZE);
+      }
+      
+      function drawTiles() {
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        for (let y = 0; y < GRID_SIZE; y++) {
+          for (let x = 0; x < GRID_SIZE; x++) {
+            const index = y * GRID_SIZE + x;
+            const value = tiles[index];
+            
+            if (value !== 0) {
+              const tileX = x * TILE_SIZE + 10;
+              const tileY = y * TILE_SIZE + 10;
+              
+              // Draw tile background
+              ctx.fillStyle = '#9C27B0';
+              ctx.fillRect(tileX, tileY, TILE_SIZE - 20, TILE_SIZE - 20);
+              
+              // Draw number
+              ctx.fillStyle = '#fff';
+              ctx.font = 'bold 24px Arial';
+              ctx.textAlign = 'center';
+              ctx.fillText(value.toString(), tileX + (TILE_SIZE - 20) / 2, tileY + (TILE_SIZE - 20) / 2 + 8);
+            }
+          }
+        }
+      }
+      
+      function canMove(x, y) {
+        return (Math.abs(x - emptyPos.x) === 1 && y === emptyPos.y) ||
+               (Math.abs(y - emptyPos.y) === 1 && x === emptyPos.x);
+      }
+      
+      function moveTile(x, y) {
+        if (!canMove(x, y)) return false;
+        
+        const fromIndex = y * GRID_SIZE + x;
+        const toIndex = emptyPos.y * GRID_SIZE + emptyPos.x;
+        
+        // Swap tiles
+        [tiles[fromIndex], tiles[toIndex]] = [tiles[toIndex], tiles[fromIndex]];
+        
+        // Update empty position
+        emptyPos.x = x;
+        emptyPos.y = y;
+        
+        moves++;
+        return true;
+      }
+      
+      function isSolved() {
+        for (let i = 0; i < tiles.length - 1; i++) {
+          if (tiles[i] !== i + 1) return false;
+        }
+        return tiles[tiles.length - 1] === 0;
+      }
+      
+      function gameLoop() {
+        if (!gameRunning) return;
+        
+        drawTiles();
+        
+        if (isSolved()) {
+          gameScore = Math.max(1000 - moves * 10, 100);
+          setTimeout(() => {
+            alert(`Puzzle Solved! Score: ${gameScore}`);
+            gameOver();
+          }, 500);
+        }
+        
+        document.getElementById('game-score').textContent = `Moves: ${moves}`;
+      }
+      
+      // Mouse/touch controls
+      canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = Math.floor((e.clientX - rect.left) / TILE_SIZE);
+        const y = Math.floor((e.clientY - rect.top) / TILE_SIZE);
+        
+        if (x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE) {
+          if (moveTile(x, y)) {
+            gameLoop();
+          }
+        }
+      });
+      
+      // Keyboard controls
+      document.addEventListener('keydown', (e) => {
+        let moved = false;
+        
+        switch(e.key) {
+          case 'ArrowUp':
+            moved = moveTile(emptyPos.x, emptyPos.y + 1);
+            break;
+          case 'ArrowDown':
+            moved = moveTile(emptyPos.x, emptyPos.y - 1);
+            break;
+          case 'ArrowLeft':
+            moved = moveTile(emptyPos.x + 1, emptyPos.y);
+            break;
+          case 'ArrowRight':
+            moved = moveTile(emptyPos.x - 1, emptyPos.y);
+            break;
+        }
+        
+        if (moved) {
+          gameLoop();
+        }
+      });
+      
+      initTiles();
+      gameLoop();
+    }
+
+    function initFlappyGame(ctx, canvas) {
+      const bird = {
+        x: 50,
+        y: canvas.height / 2,
+        velocity: 0,
+        size: 20
+      };
+      
+      let pipes = [];
+      let gameScore = 0;
+      gameRunning = true;
+      
+      function createPipe() {
+        const gap = 150;
+        const gapY = Math.random() * (canvas.height - gap - 100) + 50;
+        return {
+          x: canvas.width,
+          gapY: gapY,
+          gapHeight: gap,
+          width: 50
+        };
+      }
+      
+      function drawBird() {
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.arc(bird.x, bird.y, bird.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Draw eye
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(bird.x + 8, bird.y - 5, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      function drawPipes() {
+        ctx.fillStyle = '#4CAF50';
+        pipes.forEach(pipe => {
+          // Top pipe
+          ctx.fillRect(pipe.x, 0, pipe.width, pipe.gapY);
+          // Bottom pipe
+          ctx.fillRect(pipe.x, pipe.gapY + pipe.gapHeight, pipe.width, canvas.height - pipe.gapY - pipe.gapHeight);
+        });
+      }
+      
+      function updateBird() {
+        bird.velocity += 0.8; // Gravity
+        bird.y += bird.velocity;
+      }
+      
+      function updatePipes() {
+        pipes.forEach(pipe => {
+          pipe.x -= 3;
+        });
+        
+        // Remove pipes that are off screen
+        pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
+        
+        // Add new pipes
+        if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 300) {
+          pipes.push(createPipe());
+        }
+      }
+      
+      function checkCollision() {
+        // Check wall collision
+        if (bird.y - bird.size < 0 || bird.y + bird.size > canvas.height) {
+          return true;
+        }
+        
+        // Check pipe collision
+        return pipes.some(pipe => {
+          return bird.x + bird.size > pipe.x && 
+                 bird.x - bird.size < pipe.x + pipe.width &&
+                 (bird.y - bird.size < pipe.gapY || bird.y + bird.size > pipe.gapY + pipe.gapHeight);
+        });
+      }
+      
+      function checkScore() {
+        pipes.forEach(pipe => {
+          if (pipe.x + pipe.width < bird.x && !pipe.passed) {
+            gameScore++;
+            pipe.passed = true;
+          }
+        });
+      }
+      
+      function gameLoop() {
+        if (!gameRunning) return;
+        
+        // Clear canvas
+        ctx.fillStyle = '#87CEEB';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        updateBird();
+        updatePipes();
+        checkScore();
+        
+        drawPipes();
+        drawBird();
+        
+        if (checkCollision()) {
+          gameOver();
+          return;
+        }
+        
+        document.getElementById('game-score').textContent = `Score: ${gameScore}`;
+        
+        requestAnimationFrame(gameLoop);
+      }
+      
+      // Controls
+      document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          bird.velocity = -12;
+        }
+      });
+      
+      canvas.addEventListener('click', () => {
+        bird.velocity = -12;
+      });
+      
+      gameLoop();
     }
 
     function pauseGame() {
