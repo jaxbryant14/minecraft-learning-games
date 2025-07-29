@@ -9,7 +9,28 @@
     .container { max-width: 400px; margin: 40px auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
     h2 { text-align: center; }
     .token-info { text-align: center; margin: 1em 0; }
-    .game-link { display: block; text-align: center; margin-top: 1em; }
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 1.5em 0;
+    }
+    .game-link { 
+      display: block; 
+      text-align: center; 
+      padding: 1.2em; 
+      background: linear-gradient(45deg, #1976d2, #42a5f5); 
+      color: #fff; 
+      text-decoration: none; 
+      border-radius: 8px; 
+      font-weight: bold;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .game-link:hover { 
+      background: linear-gradient(45deg, #0d47a1, #1976d2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
     .user-email { text-align: center; color: #555; margin-bottom: 1em; }
     #signout-btn, #auth-btn { width: 100%; margin-top: 1em; }
     .error { color: #d32f2f; text-align: center; }
@@ -28,8 +49,11 @@
     <h2>Welcome to the Learning Game Portal!</h2>
     <div class="user-email" id="user-email"></div>
     <div class="token-info">Tokens: <span id="token-count"></span></div>
-    <a class="game-link" href="game.html">Play Learning Game</a>
-    <a class="game-link" href="coding-game.html">Play Coding Game (Create a Template in JS, Python, or Scratch)</a>
+    <div class="game-grid">
+      <a class="game-link" href="game.html">🔢 Multiplication Game</a>
+      <a class="game-link" href="arcade-game.html">🎮 Arcade Games</a>
+      <a class="game-link" href="coding-game.html">💻 Coding Game</a>
+    </div>
     <button id="signout-btn" style="display:none;">Sign Out</button>
     <button id="auth-btn">Sign Up / Sign In</button>
   </div>
