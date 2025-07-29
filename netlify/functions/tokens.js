@@ -35,6 +35,7 @@ exports.handler = async function(event, context) {
     if (event.httpMethod === 'GET') {
       // For GET requests, email comes from query parameters
       email = event.queryStringParameters?.email;
+      // Ignore cache-busting parameter 't'
     } else {
       // For POST requests, email comes from body
       const body = JSON.parse(event.body || '{}');

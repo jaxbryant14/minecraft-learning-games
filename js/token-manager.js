@@ -8,10 +8,13 @@ class TokenManager {
   async getTokens(email) {
     try {
       console.log('🔄 Fetching tokens for:', email);
-      const response = await fetch(`${this.apiUrl}?email=${encodeURIComponent(email)}`, {
+      // Add cache-busting parameter to ensure fresh data
+      const timestamp = Date.now();
+      const response = await fetch(`${this.apiUrl}?email=${encodeURIComponent(email)}&t=${timestamp}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
         }
       });
 
@@ -54,8 +57,7 @@ class TokenManager {
       const data = await response.json();
       console.log('✅ Tokens saved to server:', data.tokens);
       console.log('🔄 Expected tokens:', count, 'Server returned:', data.tokens);
-      // Also update localStorage as backup
-      this.setLocalTokens(email, count);
+      // Don't update localStorage - always get fresh data from server
       return data.tokens;
     } catch (error) {
       console.error('❌ Error setting tokens:', error);
