@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arcade Games Instructions</title>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0; 
+      padding: 0; 
+      min-height: 100vh;
+    }
+    .container { 
+      max-width: 800px; 
+      margin: 20px auto; 
+      background: #fff; 
+      padding: 2em; 
+      border-radius: 16px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin: 20px;
+    }
+    h1 { 
+      text-align: center; 
+      color: #333;
+      margin-bottom: 1.5em;
+      font-size: clamp(1.8em, 5vw, 2.5em);
+    }
+    h2 { 
+      color: #1976d2;
+      margin-top: 2em;
+      margin-bottom: 1em;
+      font-size: clamp(1.3em, 4vw, 1.8em);
+    }
+    .game-instruction {
+      background: #f8f9fa;
+      padding: 1.5em;
+      border-radius: 12px;
+      margin: 1.5em 0;
+      border-left: 4px solid #1976d2;
+    }
+    .game-title {
+      font-size: clamp(1.2em, 3.5vw, 1.5em);
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0.5em;
+    }
+    .game-cost {
+      color: #1976d2;
+      font-weight: bold;
+      margin-bottom: 1em;
+    }
+    .controls {
+      background: #e3f2fd;
+      padding: 1em;
+      border-radius: 8px;
+      margin: 1em 0;
+    }
+    .controls h4 {
+      margin: 0 0 0.5em 0;
+      color: #1976d2;
+    }
+    .control-item {
+      margin: 0.5em 0;
+      padding: 0.5em;
+      background: #fff;
+      border-radius: 6px;
+      border-left: 3px solid #4caf50;
+    }
+    .back-btn {
+      display: inline-block;
+      padding: 1em 2em;
+      background: linear-gradient(45deg, #1976d2, #42a5f5);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      margin: 2em 0;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .back-btn:hover {
+      transform: translateY(-2px);
+    }
+    .mobile-note {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      padding: 1em;
+      border-radius: 8px;
+      margin: 1em 0;
+      color: #856404;
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        padding: 1.5em;
+      }
+      .game-instruction {
+        padding: 1em;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        margin: 5px;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎮 Arcade Games Instructions</h1>
+    
+    <div class="mobile-note">
+      <strong>📱 Mobile Note:</strong> All games work on mobile devices! Use touch controls and on-screen buttons.
+    </div>
+    
+    <div class="game-instruction">
+      <div class="game-title">🐍 Snake Game (5 tokens)</div>
+      <div class="game-cost">Cost: 5 tokens</div>
+      <p>Control a snake and eat food to grow longer. Don't hit the walls or yourself!</p>
+      <div class="controls">
+        <h4>Controls:</h4>
+        <div class="control-item">🖱️ <strong>Desktop:</strong> Arrow keys to move</div>
+        <div class="control-item">📱 <strong>Mobile:</strong> Swipe in direction to move</div>
+      </div>
+      <p><strong>Goal:</strong> Eat as much food as possible without crashing!</p>
+    </div>
+    
+    <div class="game-instruction">
+      <div class="game-title">🧩 Tetris (10 tokens)</div>
+      <div class="game-cost">Cost: 10 tokens</div>
+      <p>Stack falling blocks to create complete lines. Clear lines to score points!</p>
+      <div class="controls">
+        <h4>Controls:</h4>
+        <div class="control-item">⬅️ <strong>Left Arrow:</strong> Move left</div>
+        <div class="control-item">➡️ <strong>Right Arrow:</strong> Move right</div>
+        <div class="control-item">⬇️ <strong>Down Arrow:</strong> Move down faster</div>
+        <div class="control-item">⬆️ <strong>Up Arrow:</strong> Rotate piece</div>
+        <div class="control-item">📱 <strong>Mobile:</strong> Tap screen edges to move, tap center to rotate</div>
+      </div>
+      <p><strong>Goal:</strong> Clear as many lines as possible!</p>
+    </div>
+    
+    <div class="game-instruction">
+      <div class="game-title">🧩 Number Puzzle (3 tokens)</div>
+      <div class="game-cost">Cost: 3 tokens</div>
+      <p>Slide tiles to arrange numbers 1-8 in order. The empty space is in the bottom right.</p>
+      <div class="controls">
+        <h4>Controls:</h4>
+        <div class="control-item">🖱️ <strong>Desktop:</strong> Click tiles or use arrow keys</div>
+        <div class="control-item">📱 <strong>Mobile:</strong> Tap tiles to move them</div>
+      </div>
+      <p><strong>Goal:</strong> Arrange numbers 1-8 in order with empty space in bottom right!</p>
+    </div>
+    
+    <div class="game-instruction">
+      <div class="game-title">🐦 Flappy Bird (4 tokens)</div>
+      <div class="game-cost">Cost: 4 tokens</div>
+      <p>Navigate through pipes by making the bird flap. Don't hit the pipes or ground!</p>
+      <div class="controls">
+        <h4>Controls:</h4>
+        <div class="control-item">⌨️ <strong>Desktop:</strong> Press Spacebar to flap</div>
+        <div class="control-item">📱 <strong>Mobile:</strong> Tap screen to flap</div>
+      </div>
+      <p><strong>Goal:</strong> Fly through as many pipes as possible!</p>
+    </div>
+    
+    <div class="game-instruction">
+      <div class="game-title">🏓 Breakout (6 tokens)</div>
+      <div class="game-cost">Cost: 6 tokens</div>
+      <p>Use your paddle to keep the ball in play and break all the blocks!</p>
+      <div class="controls">
+        <h4>Controls:</h4>
+        <div class="control-item">🖱️ <strong>Desktop:</strong> Move mouse to control paddle</div>
+        <div class="control-item">📱 <strong>Mobile:</strong> Touch and drag to move paddle</div>
+      </div>
+      <p><strong>Goal:</strong> Break all blocks without losing the ball!</p>
+    </div>
+    
+    <div class="game-instruction">
+      <div class="game-title">🏓 Pong (4 tokens)</div>
+      <div class="game-cost">Cost: 4 tokens</div>
+      <p>Classic two-player paddle game. You control the left paddle against AI!</p>
+      <div class="controls">
+        <h4>Controls:</h4>
+        <div class="control-item">🖱️ <strong>Desktop:</strong> Move mouse up/down to control paddle</div>
+        <div class="control-item">📱 <strong>Mobile:</strong> Touch and drag to move paddle</div>
+      </div>
+      <p><strong>Goal:</strong> Don't let the ball pass your paddle!</p>
+    </div>
+    
+    <div class="game-instruction">
+      <div class="game-title">☄️ Asteroids (5 tokens)</div>
+      <div class="game-cost">Cost: 5 tokens</div>
+      <p>Control a spaceship and destroy asteroids. Don't get hit!</p>
+      <div class="controls">
+        <h4>Controls:</h4>
+        <div class="control-item">⬅️ <strong>Left Arrow:</strong> Rotate left</div>
+        <div class="control-item">➡️ <strong>Right Arrow:</strong> Rotate right</div>
+        <div class="control-item">⬆️ <strong>Up Arrow:</strong> Thrust forward</div>
+        <div class="control-item">⌨️ <strong>Spacebar:</strong> Shoot</div>
+        <div class="control-item">📱 <strong>Mobile:</strong> Use on-screen buttons</div>
+      </div>
+      <p><strong>Goal:</strong> Destroy all asteroids without getting hit!</p>
+    </div>
+    
+    <div class="game-instruction">
+      <div class="game-title">👻 Pac-Man (7 tokens)</div>
+      <div class="game-cost">Cost: 7 tokens</div>
+      <p>Navigate through the maze, eat dots, and avoid ghosts!</p>
+      <div class="controls">
+        <h4>Controls:</h4>
+        <div class="control-item">⬅️ <strong>Left Arrow:</strong> Move left</div>
+        <div class="control-item">➡️ <strong>Right Arrow:</strong> Move right</div>
+        <div class="control-item">⬆️ <strong>Up Arrow:</strong> Move up</div>
+        <div class="control-item">⬇️ <strong>Down Arrow:</strong> Move down</div>
+        <div class="control-item">📱 <strong>Mobile:</strong> Swipe in direction to move</div>
+      </div>
+      <p><strong>Goal:</strong> Eat all dots while avoiding ghosts!</p>
+    </div>
+    
+    <a href="arcade-game.html" class="back-btn">🎮 Play Arcade Games</a>
+    <a href="index.html" class="back-btn">🏠 Back to Main Menu</a>
+  </div>
+</body>
+</html> 

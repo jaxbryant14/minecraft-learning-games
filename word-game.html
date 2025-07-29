@@ -14,12 +14,48 @@
     }
     .container { 
       max-width: 600px; 
-      margin: 40px auto; 
+      margin: 20px auto; 
       background: #fff; 
       padding: 2.5em; 
       border-radius: 16px; 
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
       text-align: center;
+      margin: 20px;
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        padding: 1.5em;
+      }
+      h2 {
+        font-size: 1.8em;
+      }
+      .question {
+        font-size: 1.3em;
+      }
+      .category-btn {
+        padding: 0.6em 1em;
+        font-size: 0.9em;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        margin: 5px;
+        padding: 1em;
+      }
+      h2 {
+        font-size: 1.5em;
+      }
+      .game-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .category-btn {
+        padding: 0.5em 0.8em;
+        font-size: 0.8em;
+      }
     }
     h2 { 
       text-align: center; 

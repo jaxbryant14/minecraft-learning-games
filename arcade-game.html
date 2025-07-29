@@ -102,6 +102,51 @@
       border-radius: 8px;
       background: #000;
       margin: 1em auto;
+      max-width: 100%;
+      height: auto;
+    }
+    
+    .countdown {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4em;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+      z-index: 1000;
+    }
+    
+    .mobile-controls {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+    }
+    
+    .mobile-btn {
+      width: 60px;
+      height: 60px;
+      margin: 5px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(25, 118, 210, 0.8);
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-controls {
+        display: flex;
+      }
+      .game-canvas {
+        width: 100%;
+        max-width: 400px;
+      }
     }
     .game-controls {
       margin: 1em 0;
@@ -186,18 +231,31 @@
       </div>
     </div>
     
+    <a class="back-link" href="arcade-instructions.html">📖 How to Play</a>
     <a class="back-link" href="index.html">← Back to Main Menu</a>
   </div>
 
   <div class="container game-area" id="game-area">
     <h2 id="game-title">Game</h2>
-    <canvas id="game-canvas" class="game-canvas" width="400" height="400"></canvas>
+    <div style="position: relative;">
+      <canvas id="game-canvas" class="game-canvas" width="400" height="400"></canvas>
+      <div id="countdown" class="countdown" style="display: none;"></div>
+    </div>
     <div class="game-controls">
       <button onclick="pauseGame()" id="pause-btn">Pause</button>
       <button onclick="restartGame()" id="restart-btn">Restart</button>
       <button onclick="exitGame()" id="exit-btn">Exit Game</button>
     </div>
     <div id="game-score">Score: 0</div>
+    
+    <!-- Mobile Controls -->
+    <div class="mobile-controls" id="mobile-controls">
+      <button class="mobile-btn" onclick="mobileUp()">⬆️</button>
+      <button class="mobile-btn" onclick="mobileDown()">⬇️</button>
+      <button class="mobile-btn" onclick="mobileLeft()">⬅️</button>
+      <button class="mobile-btn" onclick="mobileRight()">➡️</button>
+      <button class="mobile-btn" onclick="mobileAction()">🎯</button>
+    </div>
   </div>
 
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
@@ -272,6 +330,28 @@
       return titles[gameType] || 'Game';
     }
 
+    function startCountdown(callback) {
+      const countdownElement = document.getElementById('countdown');
+      countdownElement.style.display = 'block';
+      
+      let count = 3;
+      countdownElement.textContent = count;
+      
+      const countdownInterval = setInterval(() => {
+        count--;
+        countdownElement.textContent = count;
+        
+        if (count <= 0) {
+          countdownElement.textContent = 'GO!';
+          setTimeout(() => {
+            countdownElement.style.display = 'none';
+            clearInterval(countdownInterval);
+            callback();
+          }, 1000);
+        }
+      }, 1000);
+    }
+
     function initGame(gameType) {
       const canvas = document.getElementById('game-canvas');
       const ctx = canvas.getContext('2d');
@@ -279,23 +359,52 @@
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      if (gameType === 'snake') {
-        initSnakeGame(ctx, canvas);
-      } else if (gameType === 'tetris') {
-        initTetrisGame(ctx, canvas);
-      } else if (gameType === 'puzzle') {
-        initPuzzleGame(ctx, canvas);
-      } else if (gameType === 'flappy') {
-        initFlappyGame(ctx, canvas);
-      } else if (gameType === 'breakout') {
-        initBreakoutGame(ctx, canvas);
-      } else if (gameType === 'pong') {
-        initPongGame(ctx, canvas);
-      } else if (gameType === 'asteroids') {
-        initAsteroidsGame(ctx, canvas);
-      } else if (gameType === 'pacman') {
-        initPacmanGame(ctx, canvas);
-      }
+      // Start countdown before initializing game
+      startCountdown(() => {
+        if (gameType === 'snake') {
+          initSnakeGame(ctx, canvas);
+        } else if (gameType === 'tetris') {
+          initTetrisGame(ctx, canvas);
+        } else if (gameType === 'puzzle') {
+          initPuzzleGame(ctx, canvas);
+        } else if (gameType === 'flappy') {
+          initFlappyGame(ctx, canvas);
+        } else if (gameType === 'breakout') {
+          initBreakoutGame(ctx, canvas);
+        } else if (gameType === 'pong') {
+          initPongGame(ctx, canvas);
+        } else if (gameType === 'asteroids') {
+          initAsteroidsGame(ctx, canvas);
+        } else if (gameType === 'pacman') {
+          initPacmanGame(ctx, canvas);
+        }
+      });
+    }
+    
+    // Mobile control functions
+    function mobileUp() {
+      const event = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+      document.dispatchEvent(event);
+    }
+    
+    function mobileDown() {
+      const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+      document.dispatchEvent(event);
+    }
+    
+    function mobileLeft() {
+      const event = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
+      document.dispatchEvent(event);
+    }
+    
+    function mobileRight() {
+      const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
+      document.dispatchEvent(event);
+    }
+    
+    function mobileAction() {
+      const event = new KeyboardEvent('keydown', { key: ' ' });
+      document.dispatchEvent(event);
     }
 
     function initSnakeGame(ctx, canvas) {
@@ -350,6 +459,7 @@
           return;
         }
         
+        // Check self collision (skip first segment as it's the head)
         for (let i = 1; i < snake.length; i++) {
           if (head.x === snake[i].x && head.y === snake[i].y) {
             gameOver();
@@ -474,6 +584,20 @@
           const rect = canvas.getBoundingClientRect();
           const mouseX = e.clientX - rect.left;
           paddle.x = mouseX - paddle.width / 2;
+          
+          // Keep paddle within bounds
+          if (paddle.x < 0) paddle.x = 0;
+          if (paddle.x + paddle.width > canvas.width) {
+            paddle.x = canvas.width - paddle.width;
+          }
+        });
+        
+        // Touch control for mobile
+        canvas.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+          const rect = canvas.getBoundingClientRect();
+          const touchX = e.touches[0].clientX - rect.left;
+          paddle.x = touchX - paddle.width / 2;
           
           // Keep paddle within bounds
           if (paddle.x < 0) paddle.x = 0;
@@ -1165,9 +1289,14 @@
         
         if (!currentPiece) {
           currentPiece = createPiece();
+          // Check if the new piece can be placed
           if (!isValid(currentPiece)) {
-            gameOver();
-            return;
+            // Try to move the piece down if it's stuck at the top
+            currentPiece.y += 1;
+            if (!isValid(currentPiece)) {
+              gameOver();
+              return;
+            }
           }
         }
         
@@ -1484,6 +1613,12 @@
       });
       
       canvas.addEventListener('click', () => {
+        bird.velocity = -12;
+      });
+      
+      // Touch controls for mobile
+      canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
         bird.velocity = -12;
       });
       
