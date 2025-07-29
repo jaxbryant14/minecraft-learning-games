@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Adventure Game</title>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0; 
+      padding: 0; 
+      min-height: 100vh;
+    }
+    .container { 
+      max-width: 600px; 
+      margin: 40px auto; 
+      background: #fff; 
+      padding: 2.5em; 
+      border-radius: 16px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    h2 { 
+      text-align: center; 
+      color: #333;
+      margin-bottom: 1.5em;
+      font-size: 2.2em;
+    }
+    .token-info { 
+      text-align: center; 
+      margin-bottom: 1.5em;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #1976d2;
+    }
+    .user-email { 
+      text-align: center; 
+      margin-bottom: 1em;
+      color: #666;
+      font-style: italic;
+    }
+    .game-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin: 1.5em 0;
+      padding: 1em;
+      background: #f8f9fa;
+      border-radius: 12px;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #1976d2;
+    }
+    .stat-label {
+      font-size: 0.9em;
+      color: #666;
+    }
+    .difficulty-selector {
+      margin: 1.5em 0;
+      padding: 1em;
+      background: #e3f2fd;
+      border-radius: 12px;
+    }
+    .difficulty-btn {
+      padding: 0.8em 1.5em;
+      margin: 0.5em;
+      background: #fff;
+      border: 2px solid #1976d2;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    .difficulty-btn.active {
+      background: #1976d2;
+      color: #fff;
+    }
+    .difficulty-btn:hover {
+      background: #1976d2;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+    .question { 
+      margin: 2em 0;
+      font-size: 2em;
+      font-weight: bold;
+      color: #333;
+      padding: 1em;
+      background: #f8f9fa;
+      border-radius: 12px;
+    }
+    input[type="text"] { 
+      padding: 1em; 
+      border: 2px solid #e0e0e0; 
+      border-radius: 8px; 
+      width: 100%;
+      font-size: 1.2em;
+      text-align: center;
+      transition: border-color 0.3s;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #1976d2;
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+    button { 
+      padding: 1em 2em; 
+      background: linear-gradient(45deg, #1976d2, #42a5f5); 
+      color: #fff; 
+      border: none; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      margin: 1em 0.5em;
+      font-size: 1.1em;
+      font-weight: bold;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover { 
+      background: linear-gradient(45deg, #0d47a1, #1976d2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .result { 
+      text-align: center; 
+      margin: 1.5em 0; 
+      font-weight: bold;
+      font-size: 1.1em;
+      padding: 1em;
+      border-radius: 8px;
+    }
+    .result.correct {
+      background: #e8f5e8;
+      color: #2e7d32;
+      border: 2px solid #4caf50;
+    }
+    .result.incorrect {
+      background: #ffebee;
+      color: #c62828;
+      border: 2px solid #f44336;
+    }
+    .back-link { 
+      display: block; 
+      text-align: center; 
+      margin-top: 2em;
+      color: #1976d2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .streak-display {
+      font-size: 1.1em;
+      color: #ff9800;
+      font-weight: bold;
+      margin: 1em 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🔢 Math Adventure</h2>
+    <div class="user-email" id="user-email"></div>
+    <div class="token-info">Tokens: <span id="token-count"></span></div>
+    
+    <div class="game-stats">
+      <div class="stat">
+        <div class="stat-value" id="correct-answers">0</div>
+        <div class="stat-label">Correct</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="total-questions">0</div>
+        <div class="stat-label">Questions</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="accuracy">0%</div>
+        <div class="stat-label">Accuracy</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="current-streak">0</div>
+        <div class="stat-label">Streak</div>
+      </div>
+    </div>
+    
+    <div class="difficulty-selector">
+      <h3>Choose Difficulty:</h3>
+      <button class="difficulty-btn active" onclick="setDifficulty('easy')">Easy (1 token)</button>
+      <button class="difficulty-btn" onclick="setDifficulty('medium')">Medium (2 tokens)</button>
+      <button class="difficulty-btn" onclick="setDifficulty('hard')">Hard (3 tokens)</button>
+    </div>
+    
+    <div id="game-area">
+      <div class="question" id="question"></div>
+      <form id="answer-form">
+        <input type="text" id="answer" placeholder="Enter your answer" required />
+        <button type="submit">Submit Answer</button>
+      </form>
+      <div class="result" id="result"></div>
+      <div class="streak-display" id="streak-display"></div>
+    </div>
+    
+    <a class="back-link" href="index.html">← Back to Main Menu</a>
+  </div>
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script src="js/token-manager.js"></script>
+  <script>
+    let currentUser = null;
+    let currentEmail = null;
+    let currentQuestion = null;
+    let currentDifficulty = 'easy';
+    let gameStats = {
+      correctAnswers: 0,
+      totalQuestions: 0,
+      currentStreak: 0,
+      maxStreak: 0
+    };
+
+    async function getTokenCount(email) {
+      return await window.tokenManager.getTokens(email);
+    }
+    
+    async function setTokenCount(email, count) {
+      return await window.tokenManager.setTokens(email, count);
+    }
+    
+    function updateTokenDisplay(email) {
+      window.tokenManager.updateTokenDisplay(email);
+    }
+
+    function setDifficulty(difficulty) {
+      currentDifficulty = difficulty;
+      document.querySelectorAll('.difficulty-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      if (currentEmail) {
+        startNewRound(currentEmail);
+      }
+    }
+
+    function updateGameStats() {
+      document.getElementById('correct-answers').textContent = gameStats.correctAnswers;
+      document.getElementById('total-questions').textContent = gameStats.totalQuestions;
+      const accuracy = gameStats.totalQuestions > 0 ? Math.round((gameStats.correctAnswers / gameStats.totalQuestions) * 100) : 0;
+      document.getElementById('accuracy').textContent = accuracy + '%';
+      document.getElementById('current-streak').textContent = gameStats.currentStreak;
+    }
+
+    function updateStreakDisplay() {
+      const streakDisplay = document.getElementById('streak-display');
+      if (gameStats.currentStreak > 0) {
+        streakDisplay.textContent = `🔥 ${gameStats.currentStreak} in a row!`;
+        streakDisplay.style.display = 'block';
+      } else {
+        streakDisplay.style.display = 'none';
+      }
+    }
+
+    async function showGame(email) {
+      currentEmail = email;
+      updateTokenDisplay(email);
+      startNewRound(email);
+    }
+
+    async function startNewRound(email) {
+      let tokens = await getTokenCount(email);
+      const cost = getDifficultyCost();
+      
+      if (tokens < cost) {
+        document.getElementById('game-area').innerHTML = '<div class="result">Not enough tokens to play. <a href="index.html">Back</a></div>';
+        return;
+      }
+      
+      // Deduct tokens
+      tokens -= cost;
+      await setTokenCount(email, tokens);
+      updateTokenDisplay(email);
+      
+      currentQuestion = generateQuestion();
+      document.getElementById('question').textContent = currentQuestion.text;
+      document.getElementById('answer').value = '';
+      document.getElementById('result').textContent = '';
+      document.getElementById('answer').focus();
+    }
+
+    function getDifficultyCost() {
+      const costs = { easy: 1, medium: 2, hard: 3 };
+      return costs[currentDifficulty];
+    }
+
+    function generateQuestion() {
+      let a, b, operation, answer, text;
+      
+      switch(currentDifficulty) {
+        case 'easy':
+          a = Math.floor(Math.random() * 10) + 1;
+          b = Math.floor(Math.random() * 10) + 1;
+          operation = Math.random() < 0.7 ? '+' : '-';
+          break;
+        case 'medium':
+          a = Math.floor(Math.random() * 50) + 1;
+          b = Math.floor(Math.random() * 50) + 1;
+          operation = ['+', '-', '*'][Math.floor(Math.random() * 3)];
+          break;
+        case 'hard':
+          a = Math.floor(Math.random() * 100) + 1;
+          b = Math.floor(Math.random() * 100) + 1;
+          operation = ['+', '-', '*', '/'][Math.floor(Math.random() * 4)];
+          if (operation === '/') {
+            // Ensure clean division
+            b = Math.floor(Math.random() * 12) + 1;
+            a = b * (Math.floor(Math.random() * 10) + 1);
+          }
+          break;
+      }
+      
+      switch(operation) {
+        case '+':
+          answer = a + b;
+          text = `${a} + ${b} = ?`;
+          break;
+        case '-':
+          answer = a - b;
+          text = `${a} - ${b} = ?`;
+          break;
+        case '*':
+          answer = a * b;
+          text = `${a} × ${b} = ?`;
+          break;
+        case '/':
+          answer = a / b;
+          text = `${a} ÷ ${b} = ?`;
+          break;
+      }
+      
+      return { text, answer };
+    }
+
+    document.getElementById('answer-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const answer = parseInt(document.getElementById('answer').value.trim(), 10);
+      
+      gameStats.totalQuestions++;
+      updateGameStats();
+      
+      if (answer === currentQuestion.answer) {
+        gameStats.correctAnswers++;
+        gameStats.currentStreak++;
+        if (gameStats.currentStreak > gameStats.maxStreak) {
+          gameStats.maxStreak = gameStats.currentStreak;
+        }
+        updateGameStats();
+        updateStreakDisplay();
+        
+        const tokensEarned = getDifficultyCost() * 2;
+        let currentTokens = await getTokenCount(currentEmail);
+        let newTokens = currentTokens + tokensEarned;
+        await setTokenCount(currentEmail, newTokens);
+        updateTokenDisplay(currentEmail);
+        
+        const resultElement = document.getElementById('result');
+        resultElement.textContent = `🎉 Correct! You earned ${tokensEarned} tokens!`;
+        resultElement.className = 'result correct';
+        
+        setTimeout(() => startNewRound(currentEmail), 1500);
+      } else {
+        gameStats.currentStreak = 0;
+        updateGameStats();
+        updateStreakDisplay();
+        
+        const resultElement = document.getElementById('result');
+        resultElement.textContent = `❌ Incorrect. The answer was ${currentQuestion.answer}. Try again!`;
+        resultElement.className = 'result incorrect';
+      }
+    };
+
+    // Netlify Identity integration
+    function checkAuth() {
+      const user = netlifyIdentity.currentUser();
+      if (user) {
+        currentUser = user;
+        currentEmail = user.email;
+        document.getElementById('user-email').textContent = 'Logged in as: ' + user.email;
+        updateTokenDisplay(user.email);
+        showGame(user.email);
+      } else {
+        currentUser = null;
+        currentEmail = null;
+        document.getElementById('user-email').textContent = 'Not signed in.';
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      if (window.netlifyIdentity) {
+        netlifyIdentity.on("login", user => {
+          currentUser = user;
+          currentEmail = user.email;
+          checkAuth();
+        });
+        netlifyIdentity.on("logout", () => {
+          currentUser = null;
+          currentEmail = null;
+          checkAuth();
+        });
+        netlifyIdentity.on("init", () => {
+          checkAuth();
+        });
+        netlifyIdentity.init();
+      }
+      checkAuth();
+    });
+  </script>
+</body>
+</html> 

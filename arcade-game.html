@@ -166,6 +166,24 @@
         <div class="game-description">Break all the blocks with your paddle!</div>
         <div class="game-cost">Cost: 6 tokens</div>
       </div>
+      
+      <div class="game-card" onclick="startGame('pong', 4)">
+        <div class="game-title">🏓 Pong</div>
+        <div class="game-description">Classic two-player paddle game!</div>
+        <div class="game-cost">Cost: 4 tokens</div>
+      </div>
+      
+      <div class="game-card" onclick="startGame('asteroids', 5)">
+        <div class="game-title">☄️ Asteroids</div>
+        <div class="game-description">Destroy asteroids and survive!</div>
+        <div class="game-cost">Cost: 5 tokens</div>
+      </div>
+      
+      <div class="game-card" onclick="startGame('pacman', 7)">
+        <div class="game-title">👻 Pac-Man</div>
+        <div class="game-description">Eat dots and avoid ghosts!</div>
+        <div class="game-cost">Cost: 7 tokens</div>
+      </div>
     </div>
     
     <a class="back-link" href="index.html">← Back to Main Menu</a>
@@ -197,7 +215,10 @@
       tetris: 10,
       puzzle: 3,
       flappy: 4,
-      breakout: 6
+      breakout: 6,
+      pong: 4,
+      asteroids: 5,
+      pacman: 7
     };
 
     async function getTokenCount(email) {
@@ -243,7 +264,10 @@
         tetris: '🧩 Tetris',
         puzzle: '🧩 Number Puzzle',
         flappy: '🐦 Flappy Bird',
-        breakout: '🏓 Breakout'
+        breakout: '🏓 Breakout',
+        pong: '🏓 Pong',
+        asteroids: '☄️ Asteroids',
+        pacman: '👻 Pac-Man'
       };
       return titles[gameType] || 'Game';
     }
@@ -265,6 +289,12 @@
         initFlappyGame(ctx, canvas);
       } else if (gameType === 'breakout') {
         initBreakoutGame(ctx, canvas);
+      } else if (gameType === 'pong') {
+        initPongGame(ctx, canvas);
+      } else if (gameType === 'asteroids') {
+        initAsteroidsGame(ctx, canvas);
+      } else if (gameType === 'pacman') {
+        initPacmanGame(ctx, canvas);
       }
     }
 
@@ -489,6 +519,549 @@
       }
       
       initBlocks();
+      gameLoop();
+    }
+
+    function initPongGame(ctx, canvas) {
+      const paddleHeight = 80;
+      const paddleWidth = 10;
+      const ballSize = 8;
+      
+      const leftPaddle = {
+        x: 20,
+        y: canvas.height / 2 - paddleHeight / 2,
+        width: paddleWidth,
+        height: paddleHeight,
+        score: 0
+      };
+      
+      const rightPaddle = {
+        x: canvas.width - 20 - paddleWidth,
+        y: canvas.height / 2 - paddleHeight / 2,
+        width: paddleWidth,
+        height: paddleHeight,
+        score: 0
+      };
+      
+      const ball = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        size: ballSize,
+        dx: 4,
+        dy: 4
+      };
+      
+      let gameScore = 0;
+      gameRunning = true;
+      
+      function drawPaddles() {
+        ctx.fillStyle = '#1976d2';
+        ctx.fillRect(leftPaddle.x, leftPaddle.y, leftPaddle.width, leftPaddle.height);
+        ctx.fillRect(rightPaddle.x, rightPaddle.y, rightPaddle.width, rightPaddle.height);
+      }
+      
+      function drawBall() {
+        ctx.fillStyle = '#FF5722';
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      function updateBall() {
+        ball.x += ball.dx;
+        ball.y += ball.dy;
+        
+        // Wall collision
+        if (ball.y - ball.size < 0 || ball.y + ball.size > canvas.height) {
+          ball.dy = -ball.dy;
+        }
+        
+        // Paddle collision
+        if (ball.x - ball.size < leftPaddle.x + leftPaddle.width &&
+            ball.y > leftPaddle.y && ball.y < leftPaddle.y + leftPaddle.height &&
+            ball.x > leftPaddle.x) {
+          ball.dx = -ball.dx;
+          gameScore += 10;
+        }
+        
+        if (ball.x + ball.size > rightPaddle.x &&
+            ball.y > rightPaddle.y && ball.y < rightPaddle.y + rightPaddle.height &&
+            ball.x < rightPaddle.x + rightPaddle.width) {
+          ball.dx = -ball.dx;
+          gameScore += 10;
+        }
+        
+        // Score points
+        if (ball.x < 0) {
+          rightPaddle.score++;
+          resetBall();
+        } else if (ball.x > canvas.width) {
+          leftPaddle.score++;
+          resetBall();
+        }
+      }
+      
+      function resetBall() {
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height / 2;
+        ball.dx = Math.random() > 0.5 ? 4 : -4;
+        ball.dy = Math.random() > 0.5 ? 4 : -4;
+      }
+      
+      function updatePaddles() {
+        // AI for right paddle
+        if (ball.y < rightPaddle.y + rightPaddle.height / 2) {
+          rightPaddle.y -= 3;
+        } else {
+          rightPaddle.y += 3;
+        }
+        
+        // Keep paddles in bounds
+        if (leftPaddle.y < 0) leftPaddle.y = 0;
+        if (leftPaddle.y + leftPaddle.height > canvas.height) leftPaddle.y = canvas.height - leftPaddle.height;
+        if (rightPaddle.y < 0) rightPaddle.y = 0;
+        if (rightPaddle.y + rightPaddle.height > canvas.height) rightPaddle.y = canvas.height - rightPaddle.height;
+      }
+      
+      function gameLoop() {
+        if (!gameRunning) return;
+        
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        updateBall();
+        updatePaddles();
+        
+        drawPaddles();
+        drawBall();
+        
+        // Draw center line
+        ctx.strokeStyle = '#fff';
+        ctx.setLineDash([5, 15]);
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, 0);
+        ctx.lineTo(canvas.width / 2, canvas.height);
+        ctx.stroke();
+        
+        // Draw scores
+        ctx.fillStyle = '#fff';
+        ctx.font = '24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(leftPaddle.score, canvas.width / 4, 30);
+        ctx.fillText(rightPaddle.score, 3 * canvas.width / 4, 30);
+        
+        document.getElementById('game-score').textContent = `Score: ${gameScore}`;
+        
+        requestAnimationFrame(gameLoop);
+      }
+      
+      // Mouse control for left paddle
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseY = e.clientY - rect.top;
+        leftPaddle.y = mouseY - leftPaddle.height / 2;
+      });
+      
+      gameLoop();
+    }
+
+    function initAsteroidsGame(ctx, canvas) {
+      const player = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        size: 20,
+        angle: 0,
+        velocity: { x: 0, y: 0 }
+      };
+      
+      let asteroids = [];
+      let bullets = [];
+      let gameScore = 0;
+      gameRunning = true;
+      
+      function createAsteroid() {
+        const size = Math.random() * 30 + 20;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 2 + 1;
+        
+        return {
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: size,
+          dx: Math.cos(angle) * speed,
+          dy: Math.sin(angle) * speed
+        };
+      }
+      
+      function initAsteroids() {
+        asteroids = [];
+        for (let i = 0; i < 8; i++) {
+          asteroids.push(createAsteroid());
+        }
+      }
+      
+      function drawPlayer() {
+        ctx.save();
+        ctx.translate(player.x, player.y);
+        ctx.rotate(player.angle);
+        
+        ctx.fillStyle = '#4CAF50';
+        ctx.beginPath();
+        ctx.moveTo(0, -player.size);
+        ctx.lineTo(-player.size / 2, player.size / 2);
+        ctx.lineTo(player.size / 2, player.size / 2);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
+      }
+      
+      function drawAsteroids() {
+        ctx.fillStyle = '#FF9800';
+        asteroids.forEach(asteroid => {
+          ctx.beginPath();
+          ctx.arc(asteroid.x, asteroid.y, asteroid.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+      
+      function drawBullets() {
+        ctx.fillStyle = '#FF5722';
+        bullets.forEach(bullet => {
+          ctx.beginPath();
+          ctx.arc(bullet.x, bullet.y, 3, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+      
+      function updatePlayer() {
+        player.x += player.velocity.x;
+        player.y += player.velocity.y;
+        
+        // Wrap around screen
+        if (player.x < 0) player.x = canvas.width;
+        if (player.x > canvas.width) player.x = 0;
+        if (player.y < 0) player.y = canvas.height;
+        if (player.y > canvas.height) player.y = 0;
+      }
+      
+      function updateAsteroids() {
+        asteroids.forEach(asteroid => {
+          asteroid.x += asteroid.dx;
+          asteroid.y += asteroid.dy;
+          
+          // Wrap around screen
+          if (asteroid.x < 0) asteroid.x = canvas.width;
+          if (asteroid.x > canvas.width) asteroid.x = 0;
+          if (asteroid.y < 0) asteroid.y = canvas.height;
+          if (asteroid.y > canvas.height) asteroid.y = 0;
+        });
+      }
+      
+      function updateBullets() {
+        bullets.forEach((bullet, index) => {
+          bullet.x += bullet.dx;
+          bullet.y += bullet.dy;
+          
+          // Remove bullets that are off screen
+          if (bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
+            bullets.splice(index, 1);
+          }
+        });
+      }
+      
+      function checkCollisions() {
+        // Bullet-Asteroid collisions
+        bullets.forEach((bullet, bulletIndex) => {
+          asteroids.forEach((asteroid, asteroidIndex) => {
+            const dx = bullet.x - asteroid.x;
+            const dy = bullet.y - asteroid.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < asteroid.size) {
+              bullets.splice(bulletIndex, 1);
+              asteroids.splice(asteroidIndex, 1);
+              gameScore += 50;
+              
+              // Create smaller asteroids
+              if (asteroid.size > 15) {
+                for (let i = 0; i < 2; i++) {
+                  const newAsteroid = {
+                    x: asteroid.x,
+                    y: asteroid.y,
+                    size: asteroid.size / 2,
+                    dx: (Math.random() - 0.5) * 4,
+                    dy: (Math.random() - 0.5) * 4
+                  };
+                  asteroids.push(newAsteroid);
+                }
+              }
+            }
+          });
+        });
+        
+        // Player-Asteroid collisions
+        asteroids.forEach(asteroid => {
+          const dx = player.x - asteroid.x;
+          const dy = player.y - asteroid.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < player.size + asteroid.size) {
+            gameOver();
+          }
+        });
+      }
+      
+      function shoot() {
+        const bullet = {
+          x: player.x + Math.cos(player.angle) * player.size,
+          y: player.y + Math.sin(player.angle) * player.size,
+          dx: Math.cos(player.angle) * 8,
+          dy: Math.sin(player.angle) * 8
+        };
+        bullets.push(bullet);
+      }
+      
+      function gameLoop() {
+        if (!gameRunning) return;
+        
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        updatePlayer();
+        updateAsteroids();
+        updateBullets();
+        checkCollisions();
+        
+        drawPlayer();
+        drawAsteroids();
+        drawBullets();
+        
+        if (asteroids.length === 0) {
+          initAsteroids();
+        }
+        
+        document.getElementById('game-score').textContent = `Score: ${gameScore}`;
+        
+        requestAnimationFrame(gameLoop);
+      }
+      
+      // Controls
+      document.addEventListener('keydown', (e) => {
+        switch(e.key) {
+          case 'ArrowLeft':
+            player.angle -= 0.1;
+            break;
+          case 'ArrowRight':
+            player.angle += 0.1;
+            break;
+          case 'ArrowUp':
+            player.velocity.x += Math.cos(player.angle) * 0.5;
+            player.velocity.y += Math.sin(player.angle) * 0.5;
+            break;
+          case ' ':
+            shoot();
+            break;
+        }
+      });
+      
+      initAsteroids();
+      gameLoop();
+    }
+
+    function initPacmanGame(ctx, canvas) {
+      const CELL_SIZE = 20;
+      const PACMAN_SIZE = 18;
+      
+      const pacman = {
+        x: 1,
+        y: 1,
+        direction: { x: 1, y: 0 },
+        mouthOpen: true
+      };
+      
+      let dots = [];
+      let ghosts = [];
+      let gameScore = 0;
+      gameRunning = true;
+      
+      // Simple maze layout (1 = wall, 0 = path)
+      const maze = [
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
+        [1,0,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,0,1,1],
+        [1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,1],
+        [1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+        [1,0,1,1,0,1,0,1,1,0,1,1,0,1,0,1,1,0,1,1],
+        [1,0,0,1,0,1,0,0,0,0,0,0,0,1,0,1,0,0,0,1],
+        [1,0,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,0,1,1],
+        [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+      ];
+      
+      function initDots() {
+        dots = [];
+        for (let y = 0; y < maze.length; y++) {
+          for (let x = 0; x < maze[y].length; x++) {
+            if (maze[y][x] === 0) {
+              dots.push({ x, y });
+            }
+          }
+        }
+      }
+      
+      function initGhosts() {
+        ghosts = [
+          { x: 18, y: 11, color: '#FF0000', direction: { x: -1, y: 0 } },
+          { x: 18, y: 1, color: '#FF69B4', direction: { x: -1, y: 0 } }
+        ];
+      }
+      
+      function drawMaze() {
+        ctx.fillStyle = '#0000FF';
+        for (let y = 0; y < maze.length; y++) {
+          for (let x = 0; x < maze[y].length; x++) {
+            if (maze[y][x] === 1) {
+              ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            }
+          }
+        }
+      }
+      
+      function drawPacman() {
+        ctx.save();
+        ctx.translate(pacman.x * CELL_SIZE + CELL_SIZE / 2, pacman.y * CELL_SIZE + CELL_SIZE / 2);
+        ctx.rotate(Math.atan2(pacman.direction.y, pacman.direction.x));
+        
+        ctx.fillStyle = '#FFFF00';
+        ctx.beginPath();
+        if (pacman.mouthOpen) {
+          ctx.arc(0, 0, PACMAN_SIZE / 2, 0.2 * Math.PI, 1.8 * Math.PI);
+        } else {
+          ctx.arc(0, 0, PACMAN_SIZE / 2, 0, 2 * Math.PI);
+        }
+        ctx.lineTo(0, 0);
+        ctx.fill();
+        
+        ctx.restore();
+      }
+      
+      function drawDots() {
+        ctx.fillStyle = '#FFFFFF';
+        dots.forEach(dot => {
+          ctx.beginPath();
+          ctx.arc(dot.x * CELL_SIZE + CELL_SIZE / 2, dot.y * CELL_SIZE + CELL_SIZE / 2, 3, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+      
+      function drawGhosts() {
+        ghosts.forEach(ghost => {
+          ctx.fillStyle = ghost.color;
+          ctx.beginPath();
+          ctx.arc(ghost.x * CELL_SIZE + CELL_SIZE / 2, ghost.y * CELL_SIZE + CELL_SIZE / 2, PACMAN_SIZE / 2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+      
+      function updatePacman() {
+        const newX = pacman.x + pacman.direction.x;
+        const newY = pacman.y + pacman.direction.y;
+        
+        if (newX >= 0 && newX < maze[0].length && newY >= 0 && newY < maze.length && maze[newY][newX] === 0) {
+          pacman.x = newX;
+          pacman.y = newY;
+        }
+        
+        // Animate mouth
+        pacman.mouthOpen = !pacman.mouthOpen;
+      }
+      
+      function updateGhosts() {
+        ghosts.forEach(ghost => {
+          const newX = ghost.x + ghost.direction.x;
+          const newY = ghost.y + ghost.direction.y;
+          
+          if (newX >= 0 && newX < maze[0].length && newY >= 0 && newY < maze.length && maze[newY][newX] === 0) {
+            ghost.x = newX;
+            ghost.y = newY;
+          } else {
+            // Change direction randomly
+            const directions = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }];
+            ghost.direction = directions[Math.floor(Math.random() * directions.length)];
+          }
+        });
+      }
+      
+      function checkCollisions() {
+        // Pacman-Dot collisions
+        dots.forEach((dot, index) => {
+          if (pacman.x === dot.x && pacman.y === dot.y) {
+            dots.splice(index, 1);
+            gameScore += 10;
+          }
+        });
+        
+        // Pacman-Ghost collisions
+        ghosts.forEach(ghost => {
+          if (pacman.x === ghost.x && pacman.y === ghost.y) {
+            gameOver();
+          }
+        });
+      }
+      
+      function gameLoop() {
+        if (!gameRunning) return;
+        
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        updatePacman();
+        updateGhosts();
+        checkCollisions();
+        
+        drawMaze();
+        drawDots();
+        drawPacman();
+        drawGhosts();
+        
+        if (dots.length === 0) {
+          gameScore += 500; // Bonus for completing level
+          setTimeout(() => {
+            alert(`Level Complete! Score: ${gameScore}`);
+            gameOver();
+          }, 500);
+          return;
+        }
+        
+        document.getElementById('game-score').textContent = `Score: ${gameScore}`;
+        
+        setTimeout(gameLoop, 200);
+      }
+      
+      // Controls
+      document.addEventListener('keydown', (e) => {
+        switch(e.key) {
+          case 'ArrowLeft':
+            pacman.direction = { x: -1, y: 0 };
+            break;
+          case 'ArrowRight':
+            pacman.direction = { x: 1, y: 0 };
+            break;
+          case 'ArrowUp':
+            pacman.direction = { x: 0, y: -1 };
+            break;
+          case 'ArrowDown':
+            pacman.direction = { x: 0, y: 1 };
+            break;
+        }
+      });
+      
+      initDots();
+      initGhosts();
       gameLoop();
     }
 
