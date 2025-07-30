@@ -290,6 +290,53 @@
       gap: 0.25rem;
     }
 
+    .project-actions {
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .project-actions .btn {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .project-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      background: #f8f9fa;
+      border: none;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      color: #6c757d;
+    }
+
+    .tab-btn.active {
+      background: #007bff;
+      color: white;
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: #e9ecef;
+      color: #495057;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
     .modal {
       display: none;
       position: fixed;
@@ -462,13 +509,34 @@ console.log('Doubled:', doubled);</textarea>
   </div>
 
   <div class="projects-section">
-    <div class="projects-title">📚 Published Projects</div>
-    <div class="editor-controls" style="margin-bottom: 1rem;">
-      <button class="btn btn-primary" id="load-published-btn">📥 Load Published</button>
+    <div class="projects-title">📚 Project Library</div>
+    <div class="project-tabs">
+      <button class="tab-btn active" onclick="showTab('saved')">💾 Saved Projects</button>
+      <button class="tab-btn" onclick="showTab('published')">📤 Published Projects</button>
     </div>
-    <div id="projects-list" class="projects-list">
-      <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
-        No published projects yet. Create some code and publish it!
+    
+    <!-- Saved Projects Tab -->
+    <div id="saved-tab" class="tab-content active">
+      <div class="editor-controls" style="margin-bottom: 1rem;">
+        <button class="btn btn-success" onclick="saveCurrentProject()">💾 Save Current</button>
+        <button class="btn btn-primary" onclick="loadSavedProjects()">📥 Load Saved</button>
+      </div>
+      <div id="saved-projects-list" class="projects-list">
+        <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+          No saved projects yet. Save your first project!
+        </div>
+      </div>
+    </div>
+    
+    <!-- Published Projects Tab -->
+    <div id="published-tab" class="tab-content">
+      <div class="editor-controls" style="margin-bottom: 1rem;">
+        <button class="btn btn-primary" id="load-published-btn">📥 Load Published</button>
+      </div>
+      <div id="projects-list" class="projects-list">
+        <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+          No published projects yet. Create some code and publish it!
+        </div>
       </div>
     </div>
   </div>
@@ -828,7 +896,102 @@ main();`
       }
     });
 
+    // Tab switching function
+    function showTab(tabName) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Remove active class from all tab buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Show selected tab content
+      document.getElementById(tabName + '-tab').classList.add('active');
+      
+      // Add active class to clicked button
+      event.target.classList.add('active');
+      
+      // Load appropriate projects
+      if (tabName === 'saved') {
+        loadSavedProjects();
+      } else if (tabName === 'published') {
+        loadPublishedProjects();
+      }
+    }
+
+    // Save current project locally
+    function saveCurrentProject() {
+      const projectName = prompt('Enter a name for your project:');
+      if (!projectName) return;
+
+      const project = {
+        name: projectName,
+        code: codeInput.value,
+        date: new Date().toISOString(),
+        id: Date.now()
+      };
+
+      savedProjects.push(project);
+      localStorage.setItem('codingProjects', JSON.stringify(savedProjects));
+      
+      alert(`Project "${projectName}" saved successfully!`);
+      loadSavedProjects();
+    }
+
+    // Load saved projects from localStorage
+    function loadSavedProjects() {
+      const savedProjectsList = document.getElementById('saved-projects-list');
+      
+      if (savedProjects.length === 0) {
+        savedProjectsList.innerHTML = `
+          <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+            No saved projects yet. Save your first project!
+          </div>
+        `;
+        return;
+      }
+
+      savedProjectsList.innerHTML = savedProjects
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .map(project => `
+          <div class="project-item" onclick="loadSavedProject('${project.id}')">
+            <div class="project-name">${project.name}</div>
+            <div class="project-info">
+              <span class="project-date">Saved: ${new Date(project.date).toLocaleDateString()}</span>
+            </div>
+            <div class="project-actions">
+              <button class="btn btn-danger" onclick="deleteSavedProject('${project.id}', event)">🗑️ Delete</button>
+            </div>
+          </div>
+        `).join('');
+    }
+
+    // Load a specific saved project
+    function loadSavedProject(projectId) {
+      const project = savedProjects.find(p => p.id == projectId);
+      if (project) {
+        codeInput.value = project.code;
+        alert(`Loaded project: ${project.name}`);
+      }
+    }
+
+    // Delete a saved project
+    function deleteSavedProject(projectId, event) {
+      event.stopPropagation(); // Prevent loading the project when clicking delete
+    
+      if (confirm('Are you sure you want to delete this project?')) {
+        savedProjects = savedProjects.filter(p => p.id != projectId);
+        localStorage.setItem('codingProjects', JSON.stringify(savedProjects));
+        loadSavedProjects();
+        alert('Project deleted successfully!');
+      }
+    }
+
     // Initialize
+    loadSavedProjects();
     loadPublishedProjects();
   </script>
 </body>
