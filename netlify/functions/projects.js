@@ -1,3 +1,6 @@
+// Global storage that persists better across function calls
+let globalProjectsStorage = {};
+
 const handler = async (event) => {
   // Enable CORS
   const headers = {
@@ -16,34 +19,20 @@ const handler = async (event) => {
     };
   }
 
-  // In-memory storage for projects (in production, you'd use a database)
-  let projectsStorage = {};
-
-  // Load projects from storage
-  function loadProjects() {
-    return projectsStorage;
-  }
-
-  // Save projects to storage
-  function saveProjects(projects) {
-    projectsStorage = projects;
-    return true;
-  }
-
   try {
     console.log('📁 Projects API called:', event.httpMethod, event.path);
 
     if (event.httpMethod === 'GET') {
       // Get all published projects
-      const projects = loadProjects();
-      console.log('📁 Retrieved projects:', Object.keys(projects).length);
+      console.log('📁 Current storage:', globalProjectsStorage);
+      console.log('📁 Storage keys:', Object.keys(globalProjectsStorage));
       
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify({ 
-          projects: projects,
-          count: Object.keys(projects).length 
+          projects: globalProjectsStorage,
+          count: Object.keys(globalProjectsStorage).length 
         }),
       };
     }
@@ -53,10 +42,10 @@ const handler = async (event) => {
       const { action, project, projectId } = body;
 
       console.log('📁 POST request:', action, projectId);
+      console.log('📁 Current storage before:', globalProjectsStorage);
 
       if (action === 'publish') {
         // Publish a new project
-        const projects = loadProjects();
         const newProject = {
           ...project,
           id: projectId,
@@ -65,10 +54,10 @@ const handler = async (event) => {
           likes: 0
         };
         
-        projects[projectId] = newProject;
-        saveProjects(projects);
+        globalProjectsStorage[projectId] = newProject;
         
         console.log('📁 Project published:', projectId);
+        console.log('📁 Storage after publish:', globalProjectsStorage);
         
         return {
           statusCode: 200,
@@ -83,10 +72,8 @@ const handler = async (event) => {
 
       if (action === 'download') {
         // Increment download count
-        const projects = loadProjects();
-        if (projects[projectId]) {
-          projects[projectId].downloads = (projects[projectId].downloads || 0) + 1;
-          saveProjects(projects);
+        if (globalProjectsStorage[projectId]) {
+          globalProjectsStorage[projectId].downloads = (globalProjectsStorage[projectId].downloads || 0) + 1;
           
           console.log('📁 Project downloaded:', projectId);
           
@@ -95,7 +82,7 @@ const handler = async (event) => {
             headers,
             body: JSON.stringify({ 
               success: true, 
-              downloads: projects[projectId].downloads 
+              downloads: globalProjectsStorage[projectId].downloads 
             }),
           };
         }
@@ -103,10 +90,8 @@ const handler = async (event) => {
 
       if (action === 'like') {
         // Increment like count
-        const projects = loadProjects();
-        if (projects[projectId]) {
-          projects[projectId].likes = (projects[projectId].likes || 0) + 1;
-          saveProjects(projects);
+        if (globalProjectsStorage[projectId]) {
+          globalProjectsStorage[projectId].likes = (globalProjectsStorage[projectId].likes || 0) + 1;
           
           console.log('📁 Project liked:', projectId);
           
@@ -115,7 +100,7 @@ const handler = async (event) => {
             headers,
             body: JSON.stringify({ 
               success: true, 
-              likes: projects[projectId].likes 
+              likes: globalProjectsStorage[projectId].likes 
             }),
           };
         }
@@ -123,10 +108,8 @@ const handler = async (event) => {
 
       if (action === 'delete') {
         // Delete a project (only by author)
-        const projects = loadProjects();
-        if (projects[projectId]) {
-          delete projects[projectId];
-          saveProjects(projects);
+        if (globalProjectsStorage[projectId]) {
+          delete globalProjectsStorage[projectId];
           
           console.log('📁 Project deleted:', projectId);
           

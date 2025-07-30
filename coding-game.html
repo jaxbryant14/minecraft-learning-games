@@ -677,6 +677,9 @@ main();`
       if (!projectName) return;
 
       try {
+        console.log('🔄 Publishing project:', projectName);
+        console.log('🔄 Project code length:', codeInput.value.length);
+        
         const project = {
           name: projectName,
           code: codeInput.value,
@@ -685,10 +688,16 @@ main();`
           language: 'javascript'
         };
 
+        console.log('🔄 Project object:', project);
         const publishedProject = await window.projectManager.publishProject(project);
+        console.log('🔄 Published project response:', publishedProject);
         
         alert(`Project "${projectName}" published successfully to the cloud!`);
-        loadPublishedProjects(); // Refresh the list
+        
+        // Wait a moment then refresh the list
+        setTimeout(() => {
+          loadPublishedProjects();
+        }, 1000);
       } catch (error) {
         console.error('❌ Error publishing project:', error);
         alert('Failed to publish project. Please try again.');
