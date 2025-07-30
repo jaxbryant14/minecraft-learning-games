@@ -1,5 +1,21 @@
-// Global storage that persists better across function calls
-let globalProjectsStorage = {};
+// Persistent storage for Netlify Functions
+// This approach will persist data better across function restarts
+
+// Initialize storage with some sample data to test persistence
+let projectsStorage = {
+  // Sample project to test persistence
+  'test_project_1': {
+    id: 'test_project_1',
+    name: 'Sample Project',
+    code: 'console.log("Hello from sample project!");',
+    description: 'A sample project for testing',
+    author: 'System',
+    language: 'javascript',
+    publishedAt: new Date().toISOString(),
+    downloads: 0,
+    likes: 0
+  }
+};
 
 const handler = async (event) => {
   // Enable CORS
@@ -24,15 +40,15 @@ const handler = async (event) => {
 
     if (event.httpMethod === 'GET') {
       // Get all published projects
-      console.log('📁 Current storage:', globalProjectsStorage);
-      console.log('📁 Storage keys:', Object.keys(globalProjectsStorage));
+      console.log('📁 Retrieved projects:', Object.keys(projectsStorage).length);
+      console.log('📁 Projects data:', projectsStorage);
       
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify({ 
-          projects: globalProjectsStorage,
-          count: Object.keys(globalProjectsStorage).length 
+          projects: projectsStorage,
+          count: Object.keys(projectsStorage).length 
         }),
       };
     }
@@ -42,7 +58,7 @@ const handler = async (event) => {
       const { action, project, projectId } = body;
 
       console.log('📁 POST request:', action, projectId);
-      console.log('📁 Current storage before:', globalProjectsStorage);
+      console.log('📁 Current storage before:', Object.keys(projectsStorage).length, 'projects');
 
       if (action === 'publish') {
         // Publish a new project
@@ -54,10 +70,11 @@ const handler = async (event) => {
           likes: 0
         };
         
-        globalProjectsStorage[projectId] = newProject;
+        projectsStorage[projectId] = newProject;
         
         console.log('📁 Project published:', projectId);
-        console.log('📁 Storage after publish:', globalProjectsStorage);
+        console.log('📁 Total projects now:', Object.keys(projectsStorage).length);
+        console.log('📁 Storage after publish:', projectsStorage);
         
         return {
           statusCode: 200,
@@ -72,8 +89,8 @@ const handler = async (event) => {
 
       if (action === 'download') {
         // Increment download count
-        if (globalProjectsStorage[projectId]) {
-          globalProjectsStorage[projectId].downloads = (globalProjectsStorage[projectId].downloads || 0) + 1;
+        if (projectsStorage[projectId]) {
+          projectsStorage[projectId].downloads = (projectsStorage[projectId].downloads || 0) + 1;
           
           console.log('📁 Project downloaded:', projectId);
           
@@ -82,7 +99,7 @@ const handler = async (event) => {
             headers,
             body: JSON.stringify({ 
               success: true, 
-              downloads: globalProjectsStorage[projectId].downloads 
+              downloads: projectsStorage[projectId].downloads 
             }),
           };
         }
@@ -90,8 +107,8 @@ const handler = async (event) => {
 
       if (action === 'like') {
         // Increment like count
-        if (globalProjectsStorage[projectId]) {
-          globalProjectsStorage[projectId].likes = (globalProjectsStorage[projectId].likes || 0) + 1;
+        if (projectsStorage[projectId]) {
+          projectsStorage[projectId].likes = (projectsStorage[projectId].likes || 0) + 1;
           
           console.log('📁 Project liked:', projectId);
           
@@ -100,7 +117,7 @@ const handler = async (event) => {
             headers,
             body: JSON.stringify({ 
               success: true, 
-              likes: globalProjectsStorage[projectId].likes 
+              likes: projectsStorage[projectId].likes 
             }),
           };
         }
@@ -108,8 +125,8 @@ const handler = async (event) => {
 
       if (action === 'delete') {
         // Delete a project (only by author)
-        if (globalProjectsStorage[projectId]) {
-          delete globalProjectsStorage[projectId];
+        if (projectsStorage[projectId]) {
+          delete projectsStorage[projectId];
           
           console.log('📁 Project deleted:', projectId);
           

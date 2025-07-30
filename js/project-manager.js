@@ -33,10 +33,18 @@ class ProjectManager {
       console.log('✅ Projects fetched from server:', data);
       console.log('✅ Projects count:', data.count);
       console.log('✅ Projects object:', data.projects);
+      
+      // Check if we're getting empty projects but successful response
+      if (data.count === 0 && Object.keys(data.projects || {}).length === 0) {
+        console.log('⚠️ Warning: Empty projects returned from server');
+        console.log('⚠️ This might indicate a storage persistence issue');
+      }
+      
       return data.projects || {};
     } catch (error) {
       console.error('❌ Error fetching projects:', error);
       console.error('❌ Error details:', error.message);
+      console.log('🔄 Falling back to empty projects object');
       return {};
     }
   }
