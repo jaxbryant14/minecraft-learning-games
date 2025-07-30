@@ -257,9 +257,37 @@
       margin-bottom: 0.25rem;
     }
 
+    .project-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0.5rem 0;
+      font-size: 0.8rem;
+      color: #7f8c8d;
+    }
+    
+    .project-author {
+      font-weight: 500;
+      color: #3498db;
+    }
+    
     .project-date {
       color: #7f8c8d;
       font-size: 0.8rem;
+    }
+    
+    .project-stats {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: #7f8c8d;
+    }
+    
+    .project-downloads,
+    .project-likes {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
     }
 
     .modal {
@@ -461,6 +489,7 @@ console.log('Doubled:', doubled);</textarea>
     <a href="index.html" class="back-link">🏠 Back to Home</a>
   </div>
 
+  <script src="js/project-manager.js"></script>
   <script>
     // Code examples
     const examples = {
@@ -562,9 +591,9 @@ async function main() {
 main();`
     };
 
-    // Project storage
+    // Project storage - now using cloud-based storage
     let savedProjects = JSON.parse(localStorage.getItem('codingProjects') || '[]');
-    let publishedProjects = JSON.parse(localStorage.getItem('publishedProjects') || '[]');
+    let publishedProjects = {}; // Will be loaded from cloud
 
     // DOM elements
     const codeInput = document.getElementById('code-input');
@@ -642,53 +671,93 @@ main();`
       alert(`Project "${projectName}" saved successfully!`);
     }
 
-    // Publish project
-    function publishProject() {
+    // Publish project to cloud
+    async function publishProject() {
       const projectName = prompt('Enter a name for your published project:');
       if (!projectName) return;
 
-      const project = {
-        name: projectName,
-        code: codeInput.value,
-        date: new Date().toISOString(),
-        id: Date.now(),
-        author: 'Anonymous' // In a real app, this would be the user's name
-      };
+      try {
+        const project = {
+          name: projectName,
+          code: codeInput.value,
+          description: 'JavaScript project',
+          author: 'Anonymous', // In a real app, this would be the user's name
+          language: 'javascript'
+        };
 
-      publishedProjects.push(project);
-      localStorage.setItem('publishedProjects', JSON.stringify(publishedProjects));
-      
-      alert(`Project "${projectName}" published successfully!`);
-      loadPublishedProjects();
+        const publishedProject = await window.projectManager.publishProject(project);
+        
+        alert(`Project "${projectName}" published successfully to the cloud!`);
+        loadPublishedProjects(); // Refresh the list
+      } catch (error) {
+        console.error('❌ Error publishing project:', error);
+        alert('Failed to publish project. Please try again.');
+      }
     }
 
-    // Load published projects
-    function loadPublishedProjects() {
-      if (publishedProjects.length === 0) {
+    // Load published projects from cloud
+    async function loadPublishedProjects() {
+      try {
+        publishedProjects = await window.projectManager.getPublishedProjects();
+        
+        const projectIds = Object.keys(publishedProjects);
+        if (projectIds.length === 0) {
+          projectsList.innerHTML = `
+            <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+              No published projects yet. Create some code and publish it!
+            </div>
+          `;
+          return;
+        }
+
+        projectsList.innerHTML = projectIds
+          .sort((a, b) => new Date(publishedProjects[b].publishedAt) - new Date(publishedProjects[a].publishedAt))
+          .map(projectId => {
+            const project = publishedProjects[projectId];
+            return `
+              <div class="project-item" onclick="loadProject('${projectId}')">
+                <div class="project-name">${project.name}</div>
+                <div class="project-info">
+                  <span class="project-author">by ${project.author}</span>
+                  <span class="project-date">Published: ${new Date(project.publishedAt).toLocaleDateString()}</span>
+                </div>
+                <div class="project-stats">
+                  <span class="project-downloads">📥 ${project.downloads || 0}</span>
+                  <span class="project-likes">❤️ ${project.likes || 0}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+      } catch (error) {
+        console.error('❌ Error loading projects:', error);
         projectsList.innerHTML = `
-          <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
-            No published projects yet. Create some code and publish it!
+          <div style="text-align: center; color: #e74c3c; padding: 2rem;">
+            Error loading projects. Please try again.
           </div>
         `;
-        return;
       }
-
-      projectsList.innerHTML = publishedProjects
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .map(project => `
-          <div class="project-item" onclick="loadProject('${project.id}')">
-            <div class="project-name">${project.name}</div>
-            <div class="project-date">Published: ${new Date(project.date).toLocaleDateString()}</div>
-          </div>
-        `).join('');
     }
 
-    // Load a specific project
-    function loadProject(projectId) {
-      const project = publishedProjects.find(p => p.id == projectId);
+    // Load a specific project from cloud
+    async function loadProject(projectId) {
+      const project = publishedProjects[projectId];
       if (project) {
-        codeInput.value = project.code;
-        alert(`Loaded project: ${project.name}`);
+        try {
+          // Track download
+          await window.projectManager.downloadProject(projectId);
+          
+          // Load the code
+          codeInput.value = project.code;
+          alert(`Loaded project: ${project.name}`);
+          
+          // Refresh the list to show updated download count
+          loadPublishedProjects();
+        } catch (error) {
+          console.error('❌ Error loading project:', error);
+          // Still load the project even if tracking fails
+          codeInput.value = project.code;
+          alert(`Loaded project: ${project.name}`);
+        }
       }
     }
 
