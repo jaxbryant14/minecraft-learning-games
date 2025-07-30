@@ -3,74 +3,749 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coding Game - JavaScript Only</title>
+  <title>Coding Game - JavaScript Editor</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-    .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
-    h2 { text-align: center; }
-    .desc { text-align: center; margin-bottom: 1.5em; }
-    .editor-label { margin-bottom: 0.5em; font-weight: bold; }
-    .examples-label { font-weight: bold; margin-bottom: 0.3em; }
-    .examples-select { width: 100%; margin-bottom: 1em; padding: 0.5em; font-size: 1em; border-radius: 6px; border: 1px solid #bbb; }
-    textarea { width: 100%; height: 180px; font-family: 'Fira Mono', 'Consolas', monospace; font-size: 1em; border-radius: 6px; border: 1px solid #bbb; padding: 1em; margin-bottom: 1em; }
-    .run-btn { padding: 0.7em 2em; font-size: 1.1em; border: none; border-radius: 6px; cursor: pointer; background: #1976d2; color: #fff; transition: background 0.2s; display: block; margin: 0 auto 1em auto; }
-    .run-btn:hover { background: #0d47a1; }
-    .output-label { font-weight: bold; margin-bottom: 0.3em; }
-    .output-area { background: #1d1f5a; color: #110303; border-radius: 6px; padding: 1em; min-height: 2em; font-family: 'Fira Mono', 'Consolas', monospace; white-space: pre-wrap; margin-bottom: 1em; }
-    .back-link { display: block; text-align: center; margin-top: 2em; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header h1 {
+      color: #2c3e50;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: #7f8c8d;
+      font-size: 1rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      min-height: calc(100vh - 120px);
+    }
+
+    .editor-section {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .editor-header {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .editor-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .editor-controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: #3498db;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2980b9;
+      transform: translateY(-1px);
+    }
+
+    .btn-success {
+      background: #27ae60;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #229954;
+      transform: translateY(-1px);
+    }
+
+    .btn-warning {
+      background: #f39c12;
+      color: white;
+    }
+
+    .btn-warning:hover {
+      background: #e67e22;
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+      transform: translateY(-1px);
+    }
+
+    .code-editor {
+      width: 100%;
+      height: 400px;
+      font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 1rem;
+      border: none;
+      resize: vertical;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      outline: none;
+    }
+
+    .output-section {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .output-header {
+      background: #27ae60;
+      color: white;
+      padding: 1rem 1.5rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .output-content {
+      padding: 1rem;
+      min-height: 400px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      overflow-y: auto;
+    }
+
+    .examples-section {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .examples-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .example-card {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .example-card:hover {
+      border-color: #3498db;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+    }
+
+    .example-title {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+
+    .example-desc {
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+
+    .projects-section {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .projects-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+
+    .projects-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .project-item {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .project-item:hover {
+      background: #e9ecef;
+      transform: translateX(4px);
+    }
+
+    .project-name {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 0.25rem;
+    }
+
+    .project-date {
+      color: #7f8c8d;
+      font-size: 0.8rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      margin: 10vh auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e9ecef;
+      border-radius: 6px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-input:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 0.75rem 1.5rem;
+      background: #34495e;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .back-link:hover {
+      background: #2c3e50;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
+      
+      .header {
+        padding: 1rem;
+      }
+      
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .code-editor {
+        height: 300px;
+      }
+      
+      .output-content {
+        min-height: 300px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Coding Game: JavaScript Version</h2>
-    <div class="desc">
-      Type your JavaScript code below and click "Run Code" to see the output!
-    </div>
-    <div class="examples-label">Examples:</div>
-    <select id="examples" class="examples-select">
-      <option value="">-- Select an example --</option>
-      <option value="hello">Hello World</option>
-      <option value="add">Add Two Numbers</option>
-      <option value="loop">Simple Loop</option>
-    </select>
-    <div class="editor-label">JavaScript Code:</div>
-    <textarea id="code-input">console.log('Hello, world!');</textarea>
-    <button class="run-btn" id="run-btn">Run Code</button>
-    <div class="output-label">Output:</div>
-    <div class="output-area" id="output"></div>
-    <a class="back-link" href="index.html">Back to home Page</a>
+  <div class="header">
+    <h1>🚀 JavaScript Code Editor</h1>
+    <p>Write, run, and share your JavaScript code!</p>
   </div>
+
+  <div class="container">
+    <div class="editor-section">
+      <div class="editor-header">
+        <div class="editor-title">📝 Code Editor</div>
+        <div class="editor-controls">
+          <button class="btn btn-warning" id="save-btn">💾 Save</button>
+          <button class="btn btn-success" id="publish-btn">📤 Publish</button>
+          <button class="btn btn-primary" id="run-btn">▶️ Run</button>
+        </div>
+      </div>
+      <textarea id="code-input" class="code-editor">// Welcome to the JavaScript Code Editor!
+// Write your code here and click "Run" to see the output
+
+console.log('Hello, World!');
+
+// Try some examples:
+// - Create variables
+let name = 'Coder';
+let age = 25;
+
+// - Use template literals
+console.log(`Hello, ${name}! You are ${age} years old.`);
+
+// - Create a function
+function greet(person) {
+  return `Hello, ${person}!`;
+}
+
+console.log(greet('Friend'));
+
+// - Use arrays
+const numbers = [1, 2, 3, 4, 5];
+const doubled = numbers.map(n => n * 2);
+console.log('Original:', numbers);
+console.log('Doubled:', doubled);</textarea>
+    </div>
+
+    <div class="output-section">
+      <div class="editor-header">
+        <div class="editor-title">📊 Output</div>
+        <div class="editor-controls">
+          <button class="btn btn-danger" id="clear-btn">🗑️ Clear</button>
+        </div>
+      </div>
+      <div id="output" class="output-content">// Output will appear here when you run your code</div>
+    </div>
+  </div>
+
+  <div class="examples-section">
+    <div class="examples-title">💡 Code Examples</div>
+    <div class="examples-grid">
+      <div class="example-card" data-example="hello">
+        <div class="example-title">Hello World</div>
+        <div class="example-desc">Basic console output</div>
+      </div>
+      <div class="example-card" data-example="variables">
+        <div class="example-title">Variables & Types</div>
+        <div class="example-desc">Working with different data types</div>
+      </div>
+      <div class="example-card" data-example="functions">
+        <div class="example-title">Functions</div>
+        <div class="example-desc">Creating and using functions</div>
+      </div>
+      <div class="example-card" data-example="arrays">
+        <div class="example-title">Arrays & Loops</div>
+        <div class="example-desc">Working with arrays and loops</div>
+      </div>
+      <div class="example-card" data-example="objects">
+        <div class="example-title">Objects</div>
+        <div class="example-desc">Creating and using objects</div>
+      </div>
+      <div class="example-card" data-example="async">
+        <div class="example-title">Async/Await</div>
+        <div class="example-desc">Working with promises</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="projects-section">
+    <div class="projects-title">📚 Published Projects</div>
+    <div class="editor-controls" style="margin-bottom: 1rem;">
+      <button class="btn btn-primary" id="load-published-btn">📥 Load Published</button>
+    </div>
+    <div id="projects-list" class="projects-list">
+      <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+        No published projects yet. Create some code and publish it!
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Modal -->
+  <div id="save-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title">💾 Save Project</div>
+      <input type="text" id="project-name" class="modal-input" placeholder="Enter project name...">
+      <div class="modal-buttons">
+        <button class="btn btn-danger" id="cancel-save">Cancel</button>
+        <button class="btn btn-success" id="confirm-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center; padding: 2rem;">
+    <a href="index.html" class="back-link">🏠 Back to Home</a>
+  </div>
+
   <script>
+    // Code examples
     const examples = {
-      hello: "console.log('Hello, world!');",
-      add: "let a = 5;\nlet b = 7;\nconsole.log('The sum is', a + b);",
-      loop: "for (let i = 1; i <= 5; i++) {\n  console.log('Number:', i);\n}"
+      hello: `// Hello World Example
+console.log('Hello, World!');
+console.log('Welcome to JavaScript!');`,
+
+      variables: `// Variables and Data Types
+let name = 'Alice';
+const age = 25;
+const isStudent = true;
+const hobbies = ['reading', 'coding', 'gaming'];
+
+console.log('Name:', name);
+console.log('Age:', age);
+console.log('Is Student:', isStudent);
+console.log('Hobbies:', hobbies);
+
+// Template literals
+console.log(\`\${name} is \${age} years old\`);`,
+
+      functions: `// Functions Example
+function greet(name) {
+  return \`Hello, \${name}!\`;
+}
+
+const add = (a, b) => a + b;
+
+function factorial(n) {
+  if (n <= 1) return 1;
+  return n * factorial(n - 1);
+}
+
+console.log(greet('World'));
+console.log('Sum:', add(5, 3));
+console.log('Factorial of 5:', factorial(5));`,
+
+      arrays: `// Arrays and Loops
+const numbers = [1, 2, 3, 4, 5];
+const fruits = ['apple', 'banana', 'orange'];
+
+// For loop
+console.log('Numbers:');
+for (let i = 0; i < numbers.length; i++) {
+  console.log(numbers[i]);
+}
+
+// ForEach
+console.log('\\nFruits:');
+fruits.forEach(fruit => console.log(fruit));
+
+// Map
+const doubled = numbers.map(n => n * 2);
+console.log('\\nDoubled numbers:', doubled);
+
+// Filter
+const evenNumbers = numbers.filter(n => n % 2 === 0);
+console.log('Even numbers:', evenNumbers);`,
+
+      objects: `// Objects Example
+const person = {
+  name: 'John',
+  age: 30,
+  city: 'New York',
+  hobbies: ['coding', 'music'],
+  greet() {
+    return \`Hello, I'm \${this.name}\`;
+  }
+};
+
+console.log('Person:', person);
+console.log('Name:', person.name);
+console.log('Greeting:', person.greet());
+
+// Destructuring
+const { name, age, city } = person;
+console.log(\`\${name} is \${age} years old from \${city}\`);`,
+
+      async: `// Async/Await Example
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function fetchData() {
+  console.log('Fetching data...');
+  await delay(1000);
+  return { id: 1, name: 'Sample Data' };
+}
+
+async function main() {
+  try {
+    const data = await fetchData();
+    console.log('Data received:', data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+main();`
     };
-    document.getElementById('examples').onchange = function() {
-      const val = this.value;
-      if (examples[val]) {
-        document.getElementById('code-input').value = examples[val];
-      }
-    };
-    document.getElementById('run-btn').onclick = function() {
-      const code = document.getElementById('code-input').value;
-      const outputDiv = document.getElementById('output');
-      let output = '';
+
+    // Project storage
+    let savedProjects = JSON.parse(localStorage.getItem('codingProjects') || '[]');
+    let publishedProjects = JSON.parse(localStorage.getItem('publishedProjects') || '[]');
+
+    // DOM elements
+    const codeInput = document.getElementById('code-input');
+    const output = document.getElementById('output');
+    const runBtn = document.getElementById('run-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const publishBtn = document.getElementById('publish-btn');
+    const loadPublishedBtn = document.getElementById('load-published-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    const saveModal = document.getElementById('save-modal');
+    const projectNameInput = document.getElementById('project-name');
+    const confirmSaveBtn = document.getElementById('confirm-save');
+    const cancelSaveBtn = document.getElementById('cancel-save');
+    const projectsList = document.getElementById('projects-list');
+
+    // Run code
+    function runCode() {
+      const code = codeInput.value;
+      let outputText = '';
+      
       // Capture console.log
       const originalLog = console.log;
+      const originalError = console.error;
+      
       console.log = function(...args) {
-        output += args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ') + '\n';
+        outputText += args.map(arg => 
+          typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+        ).join(' ') + '\n';
         originalLog.apply(console, args);
       };
+      
+      console.error = function(...args) {
+        outputText += '❌ ERROR: ' + args.map(arg => 
+          typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+        ).join(' ') + '\n';
+        originalError.apply(console, args);
+      };
+
       try {
-        // eslint-disable-next-line no-eval
-        eval(code);
-      } catch (e) {
-        output += 'Error: ' + e.message + '\n';
+        // Create a safe execution environment
+        const safeEval = new Function(code);
+        safeEval();
+      } catch (error) {
+        outputText += '❌ ERROR: ' + error.message + '\n';
       }
+
+      // Restore original console methods
       console.log = originalLog;
-      outputDiv.textContent = output || '(No output)';
-    };
+      console.error = originalError;
+
+      output.textContent = outputText || '// No output generated';
+    }
+
+    // Save project locally
+    function saveProject() {
+      const projectName = projectNameInput.value.trim();
+      if (!projectName) {
+        alert('Please enter a project name!');
+        return;
+      }
+
+      const project = {
+        name: projectName,
+        code: codeInput.value,
+        date: new Date().toISOString(),
+        id: Date.now()
+      };
+
+      savedProjects.push(project);
+      localStorage.setItem('codingProjects', JSON.stringify(savedProjects));
+      
+      saveModal.style.display = 'none';
+      projectNameInput.value = '';
+      
+      alert(`Project "${projectName}" saved successfully!`);
+    }
+
+    // Publish project
+    function publishProject() {
+      const projectName = prompt('Enter a name for your published project:');
+      if (!projectName) return;
+
+      const project = {
+        name: projectName,
+        code: codeInput.value,
+        date: new Date().toISOString(),
+        id: Date.now(),
+        author: 'Anonymous' // In a real app, this would be the user's name
+      };
+
+      publishedProjects.push(project);
+      localStorage.setItem('publishedProjects', JSON.stringify(publishedProjects));
+      
+      alert(`Project "${projectName}" published successfully!`);
+      loadPublishedProjects();
+    }
+
+    // Load published projects
+    function loadPublishedProjects() {
+      if (publishedProjects.length === 0) {
+        projectsList.innerHTML = `
+          <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+            No published projects yet. Create some code and publish it!
+          </div>
+        `;
+        return;
+      }
+
+      projectsList.innerHTML = publishedProjects
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .map(project => `
+          <div class="project-item" onclick="loadProject('${project.id}')">
+            <div class="project-name">${project.name}</div>
+            <div class="project-date">Published: ${new Date(project.date).toLocaleDateString()}</div>
+          </div>
+        `).join('');
+    }
+
+    // Load a specific project
+    function loadProject(projectId) {
+      const project = publishedProjects.find(p => p.id == projectId);
+      if (project) {
+        codeInput.value = project.code;
+        alert(`Loaded project: ${project.name}`);
+      }
+    }
+
+    // Clear output
+    function clearOutput() {
+      output.textContent = '// Output cleared';
+    }
+
+    // Event listeners
+    runBtn.addEventListener('click', runCode);
+    saveBtn.addEventListener('click', () => saveModal.style.display = 'block');
+    publishBtn.addEventListener('click', publishProject);
+    loadPublishedBtn.addEventListener('click', loadPublishedProjects);
+    clearBtn.addEventListener('click', clearOutput);
+    
+    confirmSaveBtn.addEventListener('click', saveProject);
+    cancelSaveBtn.addEventListener('click', () => {
+      saveModal.style.display = 'none';
+      projectNameInput.value = '';
+    });
+
+    // Close modal when clicking outside
+    saveModal.addEventListener('click', (e) => {
+      if (e.target === saveModal) {
+        saveModal.style.display = 'none';
+        projectNameInput.value = '';
+      }
+    });
+
+    // Example cards
+    document.querySelectorAll('.example-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const example = card.dataset.example;
+        if (examples[example]) {
+          codeInput.value = examples[example];
+        }
+      });
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        switch(e.key) {
+          case 'Enter':
+            e.preventDefault();
+            runCode();
+            break;
+          case 's':
+            e.preventDefault();
+            saveModal.style.display = 'block';
+            break;
+        }
+      }
+    });
+
+    // Initialize
+    loadPublishedProjects();
   </script>
 </body>
 </html> 

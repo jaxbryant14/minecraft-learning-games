@@ -147,6 +147,59 @@
         width: 100%;
         max-width: 400px;
       }
+      
+      .container {
+        padding: 1rem;
+      }
+      
+      .game-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 0.5rem;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .game-card {
+        padding: 0.75rem;
+      }
+      
+      .game-title {
+        font-size: 1rem;
+      }
+      
+      .game-cost {
+        font-size: 0.8rem;
+      }
+      
+      .game-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+    }
+
+    @media (min-height: 800px) {
+      .container {
+        min-height: calc(100vh - 120px);
+      }
+    }
+
+    @media (max-height: 600px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .game-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem;
+      }
     }
     .game-controls {
       margin: 1em 0;
@@ -431,6 +484,12 @@
     }
 
     function initSnakeGame(ctx, canvas) {
+      // Clear any existing game loops
+      if (window.snakeGameLoopId) {
+        clearTimeout(window.snakeGameLoopId);
+        window.snakeGameLoopId = null;
+      }
+      
       let snake = [{x: 200, y: 200}];
       let food = {x: 100, y: 100};
       let dx = 10;
@@ -501,7 +560,10 @@
           return;
         }
         
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Clear canvas completely
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
         moveSnake();
         
         if (checkCollision()) {
@@ -517,6 +579,7 @@
         // Speed up as score increases
         const speed = Math.max(50, 150 - Math.floor(gameScore / 10) * 10);
         gameLoopId = setTimeout(gameLoop, speed);
+        window.snakeGameLoopId = gameLoopId;
       }
       
       // Clear any existing event listeners

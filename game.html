@@ -57,6 +57,30 @@
         grid-template-columns: repeat(2, 1fr);
       }
     }
+
+    @media (min-height: 800px) {
+      .container {
+        min-height: calc(100vh - 100px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+    }
+
+    @media (max-height: 600px) {
+      .container {
+        margin: 10px auto;
+        padding: 1.5em;
+      }
+      
+      .game-stats {
+        margin: 1em 0;
+      }
+      
+      .question {
+        margin: 1em 0;
+      }
+    }
     h2 { 
       text-align: center; 
       color: #333;
