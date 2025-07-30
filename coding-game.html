@@ -698,10 +698,16 @@ main();`
     // Load published projects from cloud
     async function loadPublishedProjects() {
       try {
+        console.log('🔄 Starting to load published projects...');
         publishedProjects = await window.projectManager.getPublishedProjects();
+        console.log('🔄 Received projects:', publishedProjects);
         
         const projectIds = Object.keys(publishedProjects);
+        console.log('🔄 Project IDs:', projectIds);
+        console.log('🔄 Number of projects:', projectIds.length);
+        
         if (projectIds.length === 0) {
+          console.log('🔄 No projects found, showing empty message');
           projectsList.innerHTML = `
             <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
               No published projects yet. Create some code and publish it!

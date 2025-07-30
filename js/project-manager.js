@@ -7,9 +7,12 @@ class ProjectManager {
   // Get all published projects
   async getPublishedProjects() {
     try {
-      console.log('📁 Fetching published projects...');
+      console.log('📁 Fetching published projects from:', this.apiUrl);
       const timestamp = Date.now();
-      const response = await fetch(`${this.apiUrl}?t=${timestamp}`, {
+      const url = `${this.apiUrl}?t=${timestamp}`;
+      console.log('📁 Full URL:', url);
+      
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -18,16 +21,22 @@ class ProjectManager {
       });
 
       console.log('📡 Response status:', response.status);
+      console.log('📡 Response headers:', response.headers);
       
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Response error text:', errorText);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('✅ Projects fetched from server:', data.count, 'projects');
+      console.log('✅ Projects fetched from server:', data);
+      console.log('✅ Projects count:', data.count);
+      console.log('✅ Projects object:', data.projects);
       return data.projects || {};
     } catch (error) {
       console.error('❌ Error fetching projects:', error);
+      console.error('❌ Error details:', error.message);
       return {};
     }
   }
