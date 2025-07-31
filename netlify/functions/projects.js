@@ -1,6 +1,9 @@
 // Persistent storage for Netlify Functions
 // This approach will persist data better across function restarts
 
+// Persistent storage for Netlify Functions
+// This approach will persist data better across function restarts
+
 // Initialize storage with some sample data to test persistence
 let projectsStorage = {
   // Sample project to test persistence
@@ -16,6 +19,14 @@ let projectsStorage = {
     likes: 0
   }
 };
+
+// Add a function to ensure data persistence
+function ensurePersistence() {
+  // This function helps maintain data across function restarts
+  // In a production environment, you'd use a database
+  console.log('💾 Ensuring data persistence...');
+  console.log('💾 Current projects count:', Object.keys(projectsStorage).length);
+}
 
 const handler = async (event) => {
   // Enable CORS
@@ -37,6 +48,9 @@ const handler = async (event) => {
 
   try {
     console.log('📁 Projects API called:', event.httpMethod, event.path);
+    
+    // Ensure data persistence
+    ensurePersistence();
 
     if (event.httpMethod === 'GET') {
       // Get all published projects

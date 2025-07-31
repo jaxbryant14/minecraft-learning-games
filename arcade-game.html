@@ -1304,6 +1304,12 @@
     }
 
     function initTetrisGame(ctx, canvas) {
+      // Clear any existing game loops
+      if (window.tetrisGameLoopId) {
+        clearTimeout(window.tetrisGameLoopId);
+        window.tetrisGameLoopId = null;
+      }
+      
       const BLOCK_SIZE = 20;
       const COLS = canvas.width / BLOCK_SIZE;
       const ROWS = canvas.height / BLOCK_SIZE;
@@ -1429,8 +1435,8 @@
         
         document.getElementById('game-score').textContent = `Score: ${gameScore}`;
         
-        // Use requestAnimationFrame for smoother gameplay
-        setTimeout(gameLoop, 500);
+        // Use setTimeout for game loop with proper ID tracking
+        window.tetrisGameLoopId = setTimeout(gameLoop, 500);
       }
       
       document.addEventListener('keydown', (e) => {

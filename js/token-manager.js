@@ -39,6 +39,12 @@ class TokenManager {
   // Set tokens for a user
   async setTokens(email, count) {
     try {
+      // Validate input
+      if (typeof count !== 'number' || count < 0) {
+        console.error('❌ Invalid token count:', count);
+        throw new Error('Invalid token count');
+      }
+      
       console.log('🔄 Setting tokens for:', email, 'to:', count);
       const response = await fetch(this.apiUrl, {
         method: 'POST',
@@ -57,7 +63,13 @@ class TokenManager {
       const data = await response.json();
       console.log('✅ Tokens saved to server:', data.tokens);
       console.log('🔄 Expected tokens:', count, 'Server returned:', data.tokens);
-      // Don't update localStorage - always get fresh data from server
+      
+      // Validate server response
+      if (typeof data.tokens !== 'number' || data.tokens < 0) {
+        console.error('❌ Invalid server response:', data.tokens);
+        throw new Error('Invalid server response');
+      }
+      
       return data.tokens;
     } catch (error) {
       console.error('❌ Error setting tokens:', error);
