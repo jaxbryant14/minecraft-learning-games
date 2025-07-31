@@ -282,6 +282,30 @@
         <div class="game-description">Eat dots and avoid ghosts!</div>
         <div class="game-cost">Cost: 7 tokens</div>
       </div>
+      
+      <div class="game-card" onclick="startGame('hair', 3)">
+        <div class="game-title">💇‍♀️ Hair Styling</div>
+        <div class="game-description">Style hair with scissors and styling tools!</div>
+        <div class="game-cost">Cost: 3 tokens</div>
+      </div>
+      
+      <div class="game-card" onclick="startGame('zombie', 5)">
+        <div class="game-title">⚔️ Zombie Slasher</div>
+        <div class="game-description">Slash cartoon zombies with your sword!</div>
+        <div class="game-cost">Cost: 5 tokens</div>
+      </div>
+      
+      <div class="game-card" onclick="startGame('cooking', 4)">
+        <div class="game-title">👨‍🍳 Cooking Master</div>
+        <div class="game-description">Cook delicious meals in the kitchen!</div>
+        <div class="game-cost">Cost: 4 tokens</div>
+      </div>
+      
+      <div class="game-card" onclick="startGame('racing', 6)">
+        <div class="game-title">🏎️ Speed Racing</div>
+        <div class="game-description">Race through obstacles at high speed!</div>
+        <div class="game-cost">Cost: 6 tokens</div>
+      </div>
     </div>
     
     <a class="back-link" href="arcade-instructions.html">📖 How to Play</a>
@@ -453,6 +477,14 @@
           initAsteroidsGame(ctx, canvas);
         } else if (gameType === 'pacman') {
           initPacmanGame(ctx, canvas);
+        } else if (gameType === 'hair') {
+          initHairGame(ctx, canvas);
+        } else if (gameType === 'zombie') {
+          initZombieGame(ctx, canvas);
+        } else if (gameType === 'cooking') {
+          initCookingGame(ctx, canvas);
+        } else if (gameType === 'racing') {
+          initRacingGame(ctx, canvas);
         }
       });
     }
@@ -1468,6 +1500,429 @@
       gameLoop();
     }
 
+    // Hair Styling Game
+    function initHairGame(ctx, canvas) {
+      let hair = [];
+      let tools = ['scissors', 'comb', 'spray'];
+      let currentTool = 'scissors';
+      let score = 0;
+      let timeLeft = 60;
+      gameRunning = true;
+      
+      // Initialize hair strands
+      function initHair() {
+        hair = [];
+        for (let i = 0; i < 20; i++) {
+          hair.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            length: 30 + Math.random() * 40,
+            styled: false,
+            color: `hsl(${Math.random() * 60 + 20}, 70%, 50%)`
+          });
+        }
+      }
+      
+      function drawHair() {
+        hair.forEach(strand => {
+          ctx.strokeStyle = strand.color;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(strand.x, strand.y);
+          ctx.lineTo(strand.x, strand.y - strand.length);
+          ctx.stroke();
+          
+          if (strand.styled) {
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(strand.x, strand.y - strand.length, 5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+      }
+      
+      function drawTools() {
+        ctx.fillStyle = '#333';
+        ctx.fillRect(10, canvas.height - 60, 200, 50);
+        
+        tools.forEach((tool, index) => {
+          const x = 20 + index * 60;
+          const y = canvas.height - 50;
+          
+          ctx.fillStyle = currentTool === tool ? '#FFD700' : '#FFF';
+          ctx.fillRect(x, y, 50, 30);
+          
+          ctx.fillStyle = '#333';
+          ctx.font = '12px Arial';
+          ctx.fillText(tool, x + 5, y + 20);
+        });
+      }
+      
+      function checkClick(x, y) {
+        hair.forEach(strand => {
+          const distance = Math.sqrt((x - strand.x) ** 2 + (y - strand.y) ** 2);
+          if (distance < 20 && !strand.styled) {
+            strand.styled = true;
+            score += 10;
+            if (currentTool === 'scissors') {
+              strand.length *= 0.8;
+            }
+          }
+        });
+      }
+      
+      function gameLoop() {
+        if (!gameRunning) return;
+        
+        ctx.fillStyle = '#F0F8FF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        drawHair();
+        drawTools();
+        
+        // Draw UI
+        ctx.fillStyle = '#333';
+        ctx.font = '20px Arial';
+        ctx.fillText(`Score: ${score}`, 10, 30);
+        ctx.fillText(`Time: ${timeLeft}`, 10, 60);
+        
+        timeLeft--;
+        if (timeLeft <= 0) {
+          gameOver();
+          return;
+        }
+        
+        setTimeout(gameLoop, 1000);
+      }
+      
+      canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        checkClick(x, y);
+      });
+      
+      canvas.addEventListener('keydown', (e) => {
+        if (e.key >= '1' && e.key <= '3') {
+          currentTool = tools[parseInt(e.key) - 1];
+        }
+      });
+      
+      initHair();
+      gameLoop();
+    }
+
+    // Zombie Slasher Game
+    function initZombieGame(ctx, canvas) {
+      let player = { x: canvas.width / 2, y: canvas.height - 50, sword: 0 };
+      let zombies = [];
+      let score = 0;
+      let timeLeft = 60;
+      gameRunning = true;
+      
+      function spawnZombie() {
+        zombies.push({
+          x: Math.random() * canvas.width,
+          y: -30,
+          speed: 1 + Math.random() * 2,
+          health: 3
+        });
+      }
+      
+      function drawPlayer() {
+        // Player body
+        ctx.fillStyle = '#4CAF50';
+        ctx.fillRect(player.x - 15, player.y - 30, 30, 30);
+        
+        // Sword
+        if (player.sword > 0) {
+          ctx.strokeStyle = '#FFD700';
+          ctx.lineWidth = 5;
+          ctx.beginPath();
+          ctx.moveTo(player.x, player.y - 15);
+          ctx.lineTo(player.x + 40, player.y - 15);
+          ctx.stroke();
+          player.sword--;
+        }
+      }
+      
+      function drawZombies() {
+        zombies.forEach(zombie => {
+          ctx.fillStyle = '#8BC34A';
+          ctx.fillRect(zombie.x - 15, zombie.y - 30, 30, 30);
+          
+          // Health bar
+          ctx.fillStyle = '#FF5722';
+          ctx.fillRect(zombie.x - 15, zombie.y - 35, 30 * (zombie.health / 3), 5);
+        });
+      }
+      
+      function updateZombies() {
+        zombies.forEach((zombie, index) => {
+          zombie.y += zombie.speed;
+          
+          // Check collision with sword
+          if (player.sword > 0 && 
+              Math.abs(zombie.x - player.x) < 40 && 
+              Math.abs(zombie.y - player.y) < 30) {
+            zombie.health--;
+            if (zombie.health <= 0) {
+              zombies.splice(index, 1);
+              score += 20;
+            }
+          }
+          
+          // Remove zombies that pass the player
+          if (zombie.y > canvas.height) {
+            zombies.splice(index, 1);
+          }
+        });
+      }
+      
+      function gameLoop() {
+        if (!gameRunning) return;
+        
+        ctx.fillStyle = '#2C3E50';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Spawn zombies
+        if (Math.random() < 0.02) {
+          spawnZombie();
+        }
+        
+        updateZombies();
+        drawZombies();
+        drawPlayer();
+        
+        // Draw UI
+        ctx.fillStyle = '#FFF';
+        ctx.font = '20px Arial';
+        ctx.fillText(`Score: ${score}`, 10, 30);
+        ctx.fillText(`Time: ${timeLeft}`, 10, 60);
+        
+        timeLeft--;
+        if (timeLeft <= 0) {
+          gameOver();
+          return;
+        }
+        
+        setTimeout(gameLoop, 50);
+      }
+      
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        player.x = e.clientX - rect.left;
+      });
+      
+      canvas.addEventListener('click', () => {
+        player.sword = 10;
+      });
+      
+      gameLoop();
+    }
+
+    // Cooking Master Game
+    function initCookingGame(ctx, canvas) {
+      let ingredients = [];
+      let pot = { x: canvas.width / 2, y: canvas.height - 100, cooking: false };
+      let score = 0;
+      let timeLeft = 60;
+      gameRunning = true;
+      
+      const ingredientTypes = ['tomato', 'onion', 'carrot', 'meat'];
+      
+      function spawnIngredient() {
+        ingredients.push({
+          x: Math.random() * canvas.width,
+          y: -30,
+          type: ingredientTypes[Math.floor(Math.random() * ingredientTypes.length)],
+          collected: false
+        });
+      }
+      
+      function drawPot() {
+        ctx.fillStyle = '#8D6E63';
+        ctx.fillRect(pot.x - 30, pot.y - 20, 60, 40);
+        
+        if (pot.cooking) {
+          ctx.fillStyle = '#FF5722';
+          ctx.fillRect(pot.x - 25, pot.y - 15, 50, 30);
+        }
+      }
+      
+      function drawIngredients() {
+        ingredients.forEach(ingredient => {
+          if (!ingredient.collected) {
+            ctx.fillStyle = ingredient.type === 'tomato' ? '#F44336' :
+                           ingredient.type === 'onion' ? '#FFF' :
+                           ingredient.type === 'carrot' ? '#FF9800' : '#8D6E63';
+            
+            ctx.fillRect(ingredient.x - 10, ingredient.y - 10, 20, 20);
+          }
+        });
+      }
+      
+      function updateIngredients() {
+        ingredients.forEach((ingredient, index) => {
+          ingredient.y += 2;
+          
+          // Check collision with pot
+          if (!ingredient.collected && 
+              Math.abs(ingredient.x - pot.x) < 30 && 
+              Math.abs(ingredient.y - pot.y) < 30) {
+            ingredient.collected = true;
+            score += 10;
+            pot.cooking = true;
+            setTimeout(() => { pot.cooking = false; }, 1000);
+          }
+          
+          // Remove ingredients that fall off screen
+          if (ingredient.y > canvas.height) {
+            ingredients.splice(index, 1);
+          }
+        });
+      }
+      
+      function gameLoop() {
+        if (!gameRunning) return;
+        
+        ctx.fillStyle = '#E8F5E8';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Spawn ingredients
+        if (Math.random() < 0.03) {
+          spawnIngredient();
+        }
+        
+        updateIngredients();
+        drawIngredients();
+        drawPot();
+        
+        // Draw UI
+        ctx.fillStyle = '#333';
+        ctx.font = '20px Arial';
+        ctx.fillText(`Score: ${score}`, 10, 30);
+        ctx.fillText(`Time: ${timeLeft}`, 10, 60);
+        
+        timeLeft--;
+        if (timeLeft <= 0) {
+          gameOver();
+          return;
+        }
+        
+        setTimeout(gameLoop, 50);
+      }
+      
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        pot.x = e.clientX - rect.left;
+      });
+      
+      gameLoop();
+    }
+
+    // Speed Racing Game
+    function initRacingGame(ctx, canvas) {
+      let car = { x: canvas.width / 2, y: canvas.height - 100, speed: 0 };
+      let obstacles = [];
+      let score = 0;
+      let timeLeft = 60;
+      gameRunning = true;
+      
+      function spawnObstacle() {
+        obstacles.push({
+          x: Math.random() * canvas.width,
+          y: -50,
+          width: 60,
+          height: 30
+        });
+      }
+      
+      function drawCar() {
+        ctx.fillStyle = '#2196F3';
+        ctx.fillRect(car.x - 20, car.y - 30, 40, 60);
+        
+        // Car details
+        ctx.fillStyle = '#1976D2';
+        ctx.fillRect(car.x - 15, car.y - 25, 30, 50);
+      }
+      
+      function drawObstacles() {
+        ctx.fillStyle = '#F44336';
+        obstacles.forEach(obstacle => {
+          ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        });
+      }
+      
+      function updateObstacles() {
+        obstacles.forEach((obstacle, index) => {
+          obstacle.y += 5;
+          
+          // Check collision
+          if (car.x < obstacle.x + obstacle.width &&
+              car.x + 40 > obstacle.x &&
+              car.y < obstacle.y + obstacle.height &&
+              car.y + 60 > obstacle.y) {
+            gameOver();
+            return;
+          }
+          
+          // Remove obstacles that pass the car
+          if (obstacle.y > canvas.height) {
+            obstacles.splice(index, 1);
+            score += 10;
+          }
+        });
+      }
+      
+      function gameLoop() {
+        if (!gameRunning) return;
+        
+        ctx.fillStyle = '#2E7D32';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Road lines
+        ctx.strokeStyle = '#FFF';
+        ctx.lineWidth = 5;
+        for (let i = 0; i < canvas.width; i += 100) {
+          ctx.beginPath();
+          ctx.moveTo(i, 0);
+          ctx.lineTo(i, canvas.height);
+          ctx.stroke();
+        }
+        
+        // Spawn obstacles
+        if (Math.random() < 0.02) {
+          spawnObstacle();
+        }
+        
+        updateObstacles();
+        drawObstacles();
+        drawCar();
+        
+        // Draw UI
+        ctx.fillStyle = '#FFF';
+        ctx.font = '20px Arial';
+        ctx.fillText(`Score: ${score}`, 10, 30);
+        ctx.fillText(`Time: ${timeLeft}`, 10, 60);
+        
+        timeLeft--;
+        if (timeLeft <= 0) {
+          gameOver();
+          return;
+        }
+        
+        setTimeout(gameLoop, 50);
+      }
+      
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        car.x = e.clientX - rect.left;
+      });
+      
+      gameLoop();
+    }
+
     function initPuzzleGame(ctx, canvas) {
       const TILE_SIZE = 80;
       const GRID_SIZE = 3;
@@ -1772,14 +2227,25 @@
         clearTimeout(window.gameLoopId);
         window.gameLoopId = null;
       }
+      if (window.snakeGameLoopId) {
+        clearTimeout(window.snakeGameLoopId);
+        window.snakeGameLoopId = null;
+      }
+      if (window.tetrisGameLoopId) {
+        clearTimeout(window.tetrisGameLoopId);
+        window.tetrisGameLoopId = null;
+      }
       
       document.getElementById('game-area').classList.remove('active');
       document.getElementById('main-container').style.display = 'block';
       currentGame = null;
       
-      // Update token display
+      // Update token display without resetting
       if (currentEmail) {
-        updateTokenDisplay(currentEmail);
+        getTokenCount(currentEmail).then(tokens => {
+          console.log('🔄 Current tokens after game exit:', tokens);
+          updateTokenDisplay(currentEmail);
+        });
       }
     }
 
