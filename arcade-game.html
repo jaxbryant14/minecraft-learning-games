@@ -1502,6 +1502,12 @@
 
     // Hair Styling Game
     function initHairGame(ctx, canvas) {
+      // Clear any existing game loops
+      if (window.hairGameLoopId) {
+        clearTimeout(window.hairGameLoopId);
+        window.hairGameLoopId = null;
+      }
+      
       let hair = [];
       let tools = ['scissors', 'comb', 'spray'];
       let currentTool = 'scissors';
@@ -1514,8 +1520,8 @@
         hair = [];
         for (let i = 0; i < 20; i++) {
           hair.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
+            x: Math.random() * (canvas.width - 100) + 50,
+            y: Math.random() * (canvas.height - 200) + 100,
             length: 30 + Math.random() * 40,
             styled: false,
             color: `hsl(${Math.random() * 60 + 20}, 70%, 50%)`
@@ -1564,6 +1570,7 @@
           if (distance < 20 && !strand.styled) {
             strand.styled = true;
             score += 10;
+            gameScore = score;
             if (currentTool === 'scissors') {
               strand.length *= 0.8;
             }
@@ -1592,21 +1599,28 @@
           return;
         }
         
-        setTimeout(gameLoop, 1000);
+        window.hairGameLoopId = setTimeout(gameLoop, 1000);
       }
       
-      canvas.addEventListener('click', (e) => {
+      // Remove existing event listeners
+      canvas.removeEventListener('click', checkClick);
+      canvas.removeEventListener('keydown', handleKeydown);
+      
+      function handleClick(e) {
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         checkClick(x, y);
-      });
+      }
       
-      canvas.addEventListener('keydown', (e) => {
+      function handleKeydown(e) {
         if (e.key >= '1' && e.key <= '3') {
           currentTool = tools[parseInt(e.key) - 1];
         }
-      });
+      }
+      
+      canvas.addEventListener('click', handleClick);
+      canvas.addEventListener('keydown', handleKeydown);
       
       initHair();
       gameLoop();
@@ -1614,6 +1628,12 @@
 
     // Zombie Slasher Game
     function initZombieGame(ctx, canvas) {
+      // Clear any existing game loops
+      if (window.zombieGameLoopId) {
+        clearTimeout(window.zombieGameLoopId);
+        window.zombieGameLoopId = null;
+      }
+      
       let player = { x: canvas.width / 2, y: canvas.height - 50, sword: 0 };
       let zombies = [];
       let score = 0;
@@ -1667,8 +1687,9 @@
               Math.abs(zombie.y - player.y) < 30) {
             zombie.health--;
             if (zombie.health <= 0) {
-              zombies.splice(index, 1);
-              score += 20;
+                           zombies.splice(index, 1);
+             score += 20;
+             gameScore = score;
             }
           }
           
@@ -1706,23 +1727,36 @@
           return;
         }
         
-        setTimeout(gameLoop, 50);
+        window.zombieGameLoopId = setTimeout(gameLoop, 50);
       }
       
-      canvas.addEventListener('mousemove', (e) => {
+      // Remove existing event listeners
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('click', handleClick);
+      
+      function handleMouseMove(e) {
         const rect = canvas.getBoundingClientRect();
         player.x = e.clientX - rect.left;
-      });
+      }
       
-      canvas.addEventListener('click', () => {
+      function handleClick() {
         player.sword = 10;
-      });
+      }
+      
+      canvas.addEventListener('mousemove', handleMouseMove);
+      canvas.addEventListener('click', handleClick);
       
       gameLoop();
     }
 
     // Cooking Master Game
     function initCookingGame(ctx, canvas) {
+      // Clear any existing game loops
+      if (window.cookingGameLoopId) {
+        clearTimeout(window.cookingGameLoopId);
+        window.cookingGameLoopId = null;
+      }
+      
       let ingredients = [];
       let pot = { x: canvas.width / 2, y: canvas.height - 100, cooking: false };
       let score = 0;
@@ -1770,8 +1804,9 @@
           if (!ingredient.collected && 
               Math.abs(ingredient.x - pot.x) < 30 && 
               Math.abs(ingredient.y - pot.y) < 30) {
-            ingredient.collected = true;
-            score += 10;
+                         ingredient.collected = true;
+             score += 10;
+             gameScore = score;
             pot.cooking = true;
             setTimeout(() => { pot.cooking = false; }, 1000);
           }
@@ -1810,19 +1845,30 @@
           return;
         }
         
-        setTimeout(gameLoop, 50);
+        window.cookingGameLoopId = setTimeout(gameLoop, 50);
       }
       
-      canvas.addEventListener('mousemove', (e) => {
+      // Remove existing event listeners
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      
+      function handleMouseMove(e) {
         const rect = canvas.getBoundingClientRect();
         pot.x = e.clientX - rect.left;
-      });
+      }
+      
+      canvas.addEventListener('mousemove', handleMouseMove);
       
       gameLoop();
     }
 
     // Speed Racing Game
     function initRacingGame(ctx, canvas) {
+      // Clear any existing game loops
+      if (window.racingGameLoopId) {
+        clearTimeout(window.racingGameLoopId);
+        window.racingGameLoopId = null;
+      }
+      
       let car = { x: canvas.width / 2, y: canvas.height - 100, speed: 0 };
       let obstacles = [];
       let score = 0;
@@ -1869,8 +1915,9 @@
           
           // Remove obstacles that pass the car
           if (obstacle.y > canvas.height) {
-            obstacles.splice(index, 1);
-            score += 10;
+                       obstacles.splice(index, 1);
+           score += 10;
+           gameScore = score;
           }
         });
       }
@@ -1912,13 +1959,18 @@
           return;
         }
         
-        setTimeout(gameLoop, 50);
+        window.racingGameLoopId = setTimeout(gameLoop, 50);
       }
       
-      canvas.addEventListener('mousemove', (e) => {
+      // Remove existing event listeners
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      
+      function handleMouseMove(e) {
         const rect = canvas.getBoundingClientRect();
         car.x = e.clientX - rect.left;
-      });
+      }
+      
+      canvas.addEventListener('mousemove', handleMouseMove);
       
       gameLoop();
     }
@@ -2234,6 +2286,22 @@
       if (window.tetrisGameLoopId) {
         clearTimeout(window.tetrisGameLoopId);
         window.tetrisGameLoopId = null;
+      }
+      if (window.hairGameLoopId) {
+        clearTimeout(window.hairGameLoopId);
+        window.hairGameLoopId = null;
+      }
+      if (window.zombieGameLoopId) {
+        clearTimeout(window.zombieGameLoopId);
+        window.zombieGameLoopId = null;
+      }
+      if (window.cookingGameLoopId) {
+        clearTimeout(window.cookingGameLoopId);
+        window.cookingGameLoopId = null;
+      }
+      if (window.racingGameLoopId) {
+        clearTimeout(window.racingGameLoopId);
+        window.racingGameLoopId = null;
       }
       
       document.getElementById('game-area').classList.remove('active');
