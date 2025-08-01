@@ -2292,31 +2292,31 @@
       
       // Clear any game loops
       if (window.gameLoopId) {
-        clearTimeout(window.gameLoopId);
+        cancelAnimationFrame(window.gameLoopId);
         window.gameLoopId = null;
       }
       if (window.snakeGameLoopId) {
-        clearTimeout(window.snakeGameLoopId);
+        cancelAnimationFrame(window.snakeGameLoopId);
         window.snakeGameLoopId = null;
       }
       if (window.tetrisGameLoopId) {
-        clearTimeout(window.tetrisGameLoopId);
+        cancelAnimationFrame(window.tetrisGameLoopId);
         window.tetrisGameLoopId = null;
       }
       if (window.hairGameLoopId) {
-        clearTimeout(window.hairGameLoopId);
+        cancelAnimationFrame(window.hairGameLoopId);
         window.hairGameLoopId = null;
       }
       if (window.zombieGameLoopId) {
-        clearTimeout(window.zombieGameLoopId);
+        cancelAnimationFrame(window.zombieGameLoopId);
         window.zombieGameLoopId = null;
       }
       if (window.cookingGameLoopId) {
-        clearTimeout(window.cookingGameLoopId);
+        cancelAnimationFrame(window.cookingGameLoopId);
         window.cookingGameLoopId = null;
       }
       if (window.racingGameLoopId) {
-        clearTimeout(window.racingGameLoopId);
+        cancelAnimationFrame(window.racingGameLoopId);
         window.racingGameLoopId = null;
       }
       
@@ -2364,31 +2364,31 @@
     function cleanupGame() {
       // Clear any game loops
       if (window.gameLoopId) {
-        clearTimeout(window.gameLoopId);
+        cancelAnimationFrame(window.gameLoopId);
         window.gameLoopId = null;
       }
       if (window.snakeGameLoopId) {
-        clearTimeout(window.snakeGameLoopId);
+        cancelAnimationFrame(window.snakeGameLoopId);
         window.snakeGameLoopId = null;
       }
       if (window.tetrisGameLoopId) {
-        clearTimeout(window.tetrisGameLoopId);
+        cancelAnimationFrame(window.tetrisGameLoopId);
         window.tetrisGameLoopId = null;
       }
       if (window.hairGameLoopId) {
-        clearTimeout(window.hairGameLoopId);
+        cancelAnimationFrame(window.hairGameLoopId);
         window.hairGameLoopId = null;
       }
       if (window.zombieGameLoopId) {
-        clearTimeout(window.zombieGameLoopId);
+        cancelAnimationFrame(window.zombieGameLoopId);
         window.zombieGameLoopId = null;
       }
       if (window.cookingGameLoopId) {
-        clearTimeout(window.cookingGameLoopId);
+        cancelAnimationFrame(window.cookingGameLoopId);
         window.cookingGameLoopId = null;
       }
       if (window.racingGameLoopId) {
-        clearTimeout(window.racingGameLoopId);
+        cancelAnimationFrame(window.racingGameLoopId);
         window.racingGameLoopId = null;
       }
       
