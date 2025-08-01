@@ -229,19 +229,20 @@
       font-weight: 500;
     }
 
-    /* Color coding for categories */
-    .sprite { background: #3498db; color: white; }
-    .controller { background: #e67e22; color: white; }
-    .game { background: #9b59b6; color: white; }
-    .music { background: #e91e63; color: white; }
-    .scene { background: #27ae60; color: white; }
-    .info { background: #e74c3c; color: white; }
-    .loops { background: #2ecc71; color: white; }
-    .logic { background: #3498db; color: white; }
-    .variables { background: #e74c3c; color: white; }
-    .math { background: #9b59b6; color: white; }
-    .animation { background: #2ecc71; color: white; }
-    .extensions { background: #95a5a6; color: white; }
+         /* Color coding for categories */
+     .event { background: #27ae60; color: white; }
+     .sprite { background: #3498db; color: white; }
+     .controller { background: #e67e22; color: white; }
+     .game { background: #9b59b6; color: white; }
+     .music { background: #e91e63; color: white; }
+     .scene { background: #27ae60; color: white; }
+     .info { background: #e74c3c; color: white; }
+     .loops { background: #2ecc71; color: white; }
+     .logic { background: #3498db; color: white; }
+     .variables { background: #e74c3c; color: white; }
+     .math { background: #9b59b6; color: white; }
+     .animation { background: #2ecc71; color: white; }
+     .extensions { background: #95a5a6; color: white; }
 
     /* Coding Workspace */
     .coding-workspace {
@@ -286,7 +287,7 @@
       display: inline-block;
       padding: 0.75rem 1rem;
       margin: 0.25rem;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 0.9rem;
       font-weight: 500;
@@ -294,6 +295,8 @@
       user-select: none;
       position: relative;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      min-width: 120px;
+      text-align: center;
     }
 
     .block:hover {
@@ -301,30 +304,77 @@
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     }
 
+    /* Block connection points */
     .block::before {
       content: '';
       position: absolute;
-      left: -8px;
+      left: -6px;
       top: 50%;
       transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-top: 8px solid transparent;
-      border-bottom: 8px solid transparent;
-      border-right: 8px solid currentColor;
+      width: 12px;
+      height: 12px;
+      background: currentColor;
+      border-radius: 50%;
+      border: 2px solid white;
     }
 
     .block::after {
       content: '';
       position: absolute;
-      right: -8px;
+      right: -6px;
       top: 50%;
       transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-top: 8px solid transparent;
-      border-bottom: 8px solid transparent;
-      border-left: 8px solid currentColor;
+      width: 12px;
+      height: 12px;
+      background: currentColor;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+
+    /* Event blocks (rounded top) */
+    .block.event {
+      border-radius: 12px 12px 8px 8px;
+      padding-top: 1.2rem;
+    }
+
+    .block.event::before {
+      display: none;
+    }
+
+    /* Nested blocks */
+    .block.nested {
+      margin: 0.1rem 0;
+      border-radius: 6px;
+      position: relative;
+    }
+
+    .block.nested::before {
+      display: none;
+    }
+
+    .block.nested::after {
+      display: none;
+    }
+
+    /* Block container for nesting */
+    .block-container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.5rem;
+      margin: 0.25rem 0;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      min-height: 40px;
+    }
+
+    /* Snap indicators */
+    .block.snap-target {
+      border: 2px dashed #FFD700;
+      background: rgba(255, 215, 0, 0.1);
+    }
+
+    .block.snap-hover {
+      transform: scale(1.05);
+      border: 2px solid #FFD700;
     }
 
     /* Block colors */
@@ -565,11 +615,16 @@
         <input type="text" class="search-input" placeholder="Search blocks..." onkeyup="filterCategories(this.value)">
       </div>
       
-      <div class="categories-list">
-        <div class="category-item" onclick="showBlocks('sprite')">
-          <div class="category-icon sprite">✈️</div>
-          <div class="category-text">Sprites</div>
-        </div>
+             <div class="categories-list">
+         <div class="category-item" onclick="showBlocks('events')">
+           <div class="category-icon event">🎯</div>
+           <div class="category-text">Events</div>
+         </div>
+         
+         <div class="category-item" onclick="showBlocks('sprite')">
+           <div class="category-icon sprite">✈️</div>
+           <div class="category-text">Sprites</div>
+         </div>
         
         <div class="category-item" onclick="showBlocks('controller')">
           <div class="category-icon controller">🎮</div>
@@ -633,14 +688,15 @@
       </div>
     </div>
 
-    <!-- Coding Workspace -->
-    <div class="coding-workspace">
-      <div class="workspace-background"></div>
-      <div class="workspace-content">
-        <div class="start-block">on start</div>
-        <div id="block-workspace"></div>
-      </div>
-    </div>
+         <!-- Coding Workspace -->
+     <div class="coding-workspace">
+       <div class="workspace-background"></div>
+       <div class="workspace-content">
+         <div id="block-workspace">
+           <!-- Event blocks will be added here -->
+         </div>
+       </div>
+     </div>
   </div>
 
   <!-- Text Editor (Hidden by default) -->
@@ -695,42 +751,44 @@ console.log('Doubled:', doubled);</textarea>
   <script src="js/token-manager.js"></script>
   <script src="js/project-manager.js"></script>
   <script>
-    // Block definitions
-    const blockCategories = {
-      sprite: [
-        { text: 'move by x: 0 y: 0', code: 'sprite.moveBy(0, 0);', color: 'sprite' },
-        { text: 'turn by degrees: 0', code: 'sprite.turnBy(0);', color: 'sprite' },
-        { text: 'go to x: 0 y: 0', code: 'sprite.goTo(0, 0);', color: 'sprite' },
-        { text: 'change x by 0', code: 'sprite.changeXBy(0);', color: 'sprite' },
-        { text: 'change y by 0', code: 'sprite.changeYBy(0);', color: 'sprite' },
-        { text: 'set x to 0', code: 'sprite.setX(0);', color: 'sprite' },
-        { text: 'set y to 0', code: 'sprite.setY(0);', color: 'sprite' },
-        { text: 'point in direction 0', code: 'sprite.pointInDirection(0);', color: 'sprite' },
-        { text: 'point towards mouse pointer', code: 'sprite.pointTowardsMouse();', color: 'sprite' },
-        { text: 'glide 0 secs to x: 0 y: 0', code: 'sprite.glideTo(0, 0, 0);', color: 'sprite' }
-      ],
+         // Block definitions
+     const blockCategories = {
+       events: [
+         { text: 'on start', code: '// Program starts here', color: 'event', type: 'event', canNest: true },
+         { text: 'on game update', code: '// Game loop', color: 'event', type: 'event', canNest: true },
+         { text: 'on A button pressed', code: 'input.onButtonPressed(Button.A, () => {\n  \n});', color: 'event', type: 'event', canNest: true },
+         { text: 'on B button pressed', code: 'input.onButtonPressed(Button.B, () => {\n  \n});', color: 'event', type: 'event', canNest: true }
+       ],
+       
+       sprite: [
+         { text: 'set mySprite to sprite of kind Player', code: 'let mySprite = sprites.create(img`\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n`, SpriteKind.Player);', color: 'sprite', type: 'action', canNest: false },
+         { text: 'set mySprite position to x 0 y 0', code: 'mySprite.setPosition(0, 0);', color: 'sprite', type: 'action', canNest: false },
+         { text: 'move mySprite by x 0 y 0', code: 'mySprite.moveBy(0, 0);', color: 'sprite', type: 'action', canNest: false },
+         { text: 'turn mySprite by degrees 0', code: 'mySprite.turnBy(0);', color: 'sprite', type: 'action', canNest: false },
+         { text: 'animate mySprite with fly to center for 2000ms loop OFF', code: 'mySprite.animate(AnimationKind.FlyToCenter, 2000, false);', color: 'sprite', type: 'action', canNest: false }
+       ],
       
-      controller: [
-        { text: 'when A button pressed', code: 'input.onButtonPressed(Button.A, () => {\n  \n});', color: 'controller' },
-        { text: 'when B button pressed', code: 'input.onButtonPressed(Button.B, () => {\n  \n});', color: 'controller' },
-        { text: 'when up pressed', code: 'input.onButtonPressed(Button.Up, () => {\n  \n});', color: 'controller' },
-        { text: 'when down pressed', code: 'input.onButtonPressed(Button.Down, () => {\n  \n});', color: 'controller' },
-        { text: 'when left pressed', code: 'input.onButtonPressed(Button.Left, () => {\n  \n});', color: 'controller' },
-        { text: 'when right pressed', code: 'input.onButtonPressed(Button.Right, () => {\n  \n});', color: 'controller' },
-        { text: 'is A pressed', code: 'input.buttonIsPressed(Button.A)', color: 'controller' },
-        { text: 'is B pressed', code: 'input.buttonIsPressed(Button.B)', color: 'controller' }
-      ],
+             controller: [
+         { text: 'when A button pressed', code: 'input.onButtonPressed(Button.A, () => {\n  \n});', color: 'controller', type: 'event', canNest: true },
+         { text: 'when B button pressed', code: 'input.onButtonPressed(Button.B, () => {\n  \n});', color: 'controller', type: 'event', canNest: true },
+         { text: 'when up pressed', code: 'input.onButtonPressed(Button.Up, () => {\n  \n});', color: 'controller', type: 'event', canNest: true },
+         { text: 'when down pressed', code: 'input.onButtonPressed(Button.Down, () => {\n  \n});', color: 'controller', type: 'event', canNest: true },
+         { text: 'when left pressed', code: 'input.onButtonPressed(Button.Left, () => {\n  \n});', color: 'controller', type: 'event', canNest: true },
+         { text: 'when right pressed', code: 'input.onButtonPressed(Button.Right, () => {\n  \n});', color: 'controller', type: 'event', canNest: true },
+         { text: 'is A pressed', code: 'input.buttonIsPressed(Button.A)', color: 'controller', type: 'condition', canNest: false },
+         { text: 'is B pressed', code: 'input.buttonIsPressed(Button.B)', color: 'controller', type: 'condition', canNest: false }
+       ],
       
-      game: [
-        { text: 'start countdown 0', code: 'game.startCountdown(0);', color: 'game' },
-        { text: 'add score 0', code: 'info.changeScoreBy(0);', color: 'game' },
-        { text: 'set score to 0', code: 'info.setScore(0);', color: 'game' },
-        { text: 'add life 0', code: 'info.changeLifeBy(0);', color: 'game' },
-        { text: 'set life to 0', code: 'info.setLife(0);', color: 'game' },
-        { text: 'game over', code: 'game.over();', color: 'game' },
-        { text: 'pause', code: 'game.pause();', color: 'game' },
-        { text: 'resume', code: 'game.resume();', color: 'game' }
-      ],
+             game: [
+         { text: 'game over WIN', code: 'game.over(true);', color: 'game', type: 'action', canNest: false },
+         { text: 'game over LOSE', code: 'game.over(false);', color: 'game', type: 'action', canNest: false },
+         { text: 'add score 0', code: 'info.changeScoreBy(0);', color: 'game', type: 'action', canNest: false },
+         { text: 'set score to 0', code: 'info.setScore(0);', color: 'game', type: 'action', canNest: false },
+         { text: 'add life 0', code: 'info.changeLifeBy(0);', color: 'game', type: 'action', canNest: false },
+         { text: 'set life to 0', code: 'info.setLife(0);', color: 'game', type: 'action', canNest: false },
+         { text: 'pause', code: 'game.pause();', color: 'game', type: 'action', canNest: false },
+         { text: 'resume', code: 'game.resume();', color: 'game', type: 'action', canNest: false }
+       ],
       
       music: [
         { text: 'play tone at 0 for 0', code: 'music.playTone(0, 0);', color: 'music' },
@@ -741,13 +799,13 @@ console.log('Doubled:', doubled);</textarea>
         { text: 'change volume by 0', code: 'music.changeVolumeBy(0);', color: 'music' }
       ],
       
-      scene: [
-        { text: 'set background image to', code: 'scene.setBackgroundImage();', color: 'scene' },
-        { text: 'set background color to', code: 'scene.setBackgroundColor(0);', color: 'scene' },
-        { text: 'set tile to', code: 'scene.setTile();', color: 'scene' },
-        { text: 'set tile at x:0 y:0 to', code: 'scene.setTileAt(0, 0);', color: 'scene' },
-        { text: 'replace all tiles with', code: 'scene.replaceAllTiles();', color: 'scene' }
-      ],
+             scene: [
+         { text: 'set background image to', code: 'scene.setBackgroundImage(img`\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n. . . . . . . . . . . . . . . .\n`);', color: 'scene', type: 'action', canNest: false },
+         { text: 'set background color to', code: 'scene.setBackgroundColor(0);', color: 'scene', type: 'action', canNest: false },
+         { text: 'set tile to', code: 'scene.setTile();', color: 'scene', type: 'action', canNest: false },
+         { text: 'set tile at x:0 y:0 to', code: 'scene.setTileAt(0, 0);', color: 'scene', type: 'action', canNest: false },
+         { text: 'replace all tiles with', code: 'scene.replaceAllTiles();', color: 'scene', type: 'action', canNest: false }
+       ],
       
       info: [
         { text: 'show number 0', code: 'basic.showNumber(0);', color: 'info' },
@@ -777,12 +835,13 @@ console.log('Doubled:', doubled);</textarea>
         { text: 'not', code: '!', color: 'logic' }
       ],
       
-      variables: [
-        { text: 'set myVariable to 0', code: 'let myVariable = 0;', color: 'variables' },
-        { text: 'change myVariable by 0', code: 'myVariable += 0;', color: 'variables' },
-        { text: 'show variable myVariable', code: 'basic.showNumber(myVariable);', color: 'variables' },
-        { text: 'set myVariable to "hello"', code: 'let myVariable = "hello";', color: 'variables' }
-      ],
+             variables: [
+         { text: 'set gfg to 0', code: 'let gfg = 0;', color: 'variables', type: 'action', canNest: false },
+         { text: 'set myVariable to 0', code: 'let myVariable = 0;', color: 'variables', type: 'action', canNest: false },
+         { text: 'change myVariable by 0', code: 'myVariable += 0;', color: 'variables', type: 'action', canNest: false },
+         { text: 'show variable myVariable', code: 'basic.showNumber(myVariable);', color: 'variables', type: 'action', canNest: false },
+         { text: 'set myVariable to "hello"', code: 'let myVariable = "hello";', color: 'variables', type: 'action', canNest: false }
+       ],
       
       math: [
         { text: '0 + 0', code: '0 + 0', color: 'math' },
@@ -817,117 +876,219 @@ console.log('Doubled:', doubled);</textarea>
       ]
     };
 
-    let currentMode = 'blocks';
-    let currentCategory = null;
-    let workspaceBlocks = [];
+         let currentMode = 'blocks';
+     let currentCategory = null;
+     let workspaceBlocks = [];
+     let draggedBlock = null;
+     let snapTargets = [];
 
-    // Switch between block coding and text editor
-    function switchMode(mode) {
-      currentMode = mode;
-      
-      // Update button states
-      document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      event.target.classList.add('active');
-      
-      // Show/hide sections
-      if (mode === 'blocks') {
-        document.querySelector('.main-container').style.display = 'flex';
-        document.querySelector('.text-editor').style.display = 'none';
-      } else {
-        document.querySelector('.main-container').style.display = 'none';
-        document.querySelector('.text-editor').style.display = 'block';
-      }
-    }
+     // Switch between block coding and text editor
+     function switchMode(mode) {
+       currentMode = mode;
+       
+       // Update button states
+       document.querySelectorAll('.mode-btn').forEach(btn => {
+         btn.classList.remove('active');
+       });
+       event.target.classList.add('active');
+       
+       // Show/hide sections
+       if (mode === 'blocks') {
+         document.querySelector('.main-container').style.display = 'flex';
+         document.querySelector('.text-editor').style.display = 'none';
+       } else {
+         document.querySelector('.main-container').style.display = 'none';
+         document.querySelector('.text-editor').style.display = 'block';
+       }
+     }
 
-    // Show blocks for a specific category
-    function showBlocks(category) {
-      currentCategory = category;
-      const blocks = blockCategories[category] || [];
-      
-      // Create block selection area
-      const workspace = document.getElementById('block-workspace');
-      workspace.innerHTML = '';
-      
-      // Add category title
-      const title = document.createElement('h3');
-      title.textContent = category.charAt(0).toUpperCase() + category.slice(1) + ' Blocks';
-      title.style.marginBottom = '1rem';
-      title.style.color = '#2c3e50';
-      workspace.appendChild(title);
-      
-      // Add blocks
-      blocks.forEach(block => {
-        const blockElement = document.createElement('div');
-        blockElement.className = `block ${block.color}`;
-        blockElement.textContent = block.text;
-        blockElement.draggable = true;
-        blockElement.dataset.code = block.code;
-        
-        blockElement.addEventListener('dragstart', (e) => {
-          e.dataTransfer.setData('text/plain', block.code);
-          e.dataTransfer.setData('text/html', blockElement.outerHTML);
-        });
-        
-        blockElement.addEventListener('click', () => {
-          addBlockToWorkspace(block);
-        });
-        
-        workspace.appendChild(blockElement);
-      });
-    }
+     // Show blocks for a specific category
+     function showBlocks(category) {
+       currentCategory = category;
+       const blocks = blockCategories[category] || [];
+       
+       // Create block selection area
+       const workspace = document.getElementById('block-workspace');
+       workspace.innerHTML = '';
+       
+       // Add category title
+       const title = document.createElement('h3');
+       title.textContent = category.charAt(0).toUpperCase() + category.slice(1) + ' Blocks';
+       title.style.marginBottom = '1rem';
+       title.style.color = '#2c3e50';
+       workspace.appendChild(title);
+       
+       // Add blocks
+       blocks.forEach(block => {
+         const blockElement = document.createElement('div');
+         blockElement.className = `block ${block.color}`;
+         if (block.type === 'event') {
+           blockElement.classList.add('event');
+         }
+         blockElement.textContent = block.text;
+         blockElement.draggable = true;
+         blockElement.dataset.block = JSON.stringify(block);
+         
+         blockElement.addEventListener('dragstart', (e) => {
+           draggedBlock = block;
+           e.dataTransfer.setData('text/plain', JSON.stringify(block));
+         });
+         
+         blockElement.addEventListener('click', () => {
+           addBlockToWorkspace(block);
+         });
+         
+         workspace.appendChild(blockElement);
+       });
+     }
 
-    // Add block to workspace
-    function addBlockToWorkspace(block) {
-      const workspace = document.querySelector('.workspace-content');
-      const blockElement = document.createElement('div');
-      blockElement.className = `block ${block.color}`;
-      blockElement.textContent = block.text;
-      blockElement.style.margin = '0.5rem 0';
-      blockElement.onclick = () => blockElement.remove();
-      
-      workspace.appendChild(blockElement);
-      workspaceBlocks.push(block);
-      
-      updateGeneratedCode();
-    }
+     // Add block to workspace
+     function addBlockToWorkspace(block) {
+       const workspace = document.querySelector('.workspace-content');
+       
+       if (block.type === 'event') {
+         // Create event block with nesting container
+         const eventContainer = document.createElement('div');
+         eventContainer.className = 'block event ' + block.color;
+         eventContainer.textContent = block.text;
+         eventContainer.dataset.block = JSON.stringify(block);
+         
+         const nestContainer = document.createElement('div');
+         nestContainer.className = 'block-container';
+         nestContainer.dataset.parent = block.text;
+         
+         eventContainer.appendChild(nestContainer);
+         workspace.appendChild(eventContainer);
+         
+         // Make the nest container a drop target
+         makeDropTarget(nestContainer);
+       } else {
+         // Create regular block
+         const blockElement = document.createElement('div');
+         blockElement.className = `block ${block.color} nested`;
+         blockElement.textContent = block.text;
+         blockElement.dataset.block = JSON.stringify(block);
+         blockElement.draggable = true;
+         
+         // Make it a drop target for other blocks
+         makeDropTarget(blockElement);
+         
+         workspace.appendChild(blockElement);
+       }
+       
+       workspaceBlocks.push(block);
+       updateGeneratedCode();
+     }
 
-    // Update generated code from blocks
-    function updateGeneratedCode() {
-      let code = '// Generated code from blocks\n\n';
-      code += '// Initialize\n';
-      code += 'let sprite = game.createSprite(2, 2);\n';
-      code += 'let score = 0;\n\n';
-      
-      workspaceBlocks.forEach(block => {
-        code += block.code + '\n';
-      });
-      
-      // Update text editor if in text mode
-      const codeInput = document.getElementById('code-input');
-      if (codeInput) {
-        codeInput.value = code;
-      }
-    }
+     // Make an element a drop target
+     function makeDropTarget(element) {
+       element.addEventListener('dragover', (e) => {
+         e.preventDefault();
+         element.classList.add('snap-target');
+       });
+       
+       element.addEventListener('dragleave', () => {
+         element.classList.remove('snap-target');
+       });
+       
+       element.addEventListener('drop', (e) => {
+         e.preventDefault();
+         element.classList.remove('snap-target');
+         
+         const blockData = JSON.parse(e.dataTransfer.getData('text/plain'));
+         if (blockData.type !== 'event') {
+           // Add the dropped block as a nested block
+           const nestedBlock = document.createElement('div');
+           nestedBlock.className = `block ${blockData.color} nested`;
+           nestedBlock.textContent = blockData.text;
+           nestedBlock.dataset.block = JSON.stringify(blockData);
+           
+           element.appendChild(nestedBlock);
+           workspaceBlocks.push(blockData);
+           updateGeneratedCode();
+         }
+       });
+     }
 
-    // Filter categories
-    function filterCategories(searchTerm) {
-      const categories = document.querySelectorAll('.category-item');
-      categories.forEach(category => {
-        const text = category.querySelector('.category-text').textContent.toLowerCase();
-        if (text.includes(searchTerm.toLowerCase())) {
-          category.style.display = 'flex';
-        } else {
-          category.style.display = 'none';
-        }
-      });
-    }
+     // Update generated code from blocks
+     function updateGeneratedCode() {
+       let code = '// Generated code from blocks\n\n';
+       
+       // Find all event blocks in workspace
+       const eventBlocks = document.querySelectorAll('.block.event');
+       eventBlocks.forEach(eventBlock => {
+         const blockData = JSON.parse(eventBlock.dataset.block);
+         code += blockData.code + '\n';
+         
+         // Find nested blocks
+         const nestedBlocks = eventBlock.querySelectorAll('.block.nested');
+         nestedBlocks.forEach(nestedBlock => {
+           const nestedData = JSON.parse(nestedBlock.dataset.block);
+           code += '  ' + nestedData.code + '\n';
+         });
+         
+         if (blockData.code.includes('() => {')) {
+           code += '});\n';
+         }
+         code += '\n';
+       });
+       
+       // Update text editor if in text mode
+       const codeInput = document.getElementById('code-input');
+       if (codeInput) {
+         codeInput.value = code;
+       }
+     }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      // Show default category
-      showBlocks('sprite');
+     // Filter categories
+     function filterCategories(searchTerm) {
+       const categories = document.querySelectorAll('.category-item');
+       categories.forEach(category => {
+         const text = category.querySelector('.category-text').textContent.toLowerCase();
+         if (text.includes(searchTerm.toLowerCase())) {
+           category.style.display = 'flex';
+         } else {
+           category.style.display = 'none';
+         }
+       });
+     }
+
+         // Initialize
+     document.addEventListener('DOMContentLoaded', function() {
+       // Show default category
+       showBlocks('events');
+       
+       // Add some sample blocks to workspace
+       const sampleBlocks = [
+         blockCategories.events[0], // on start
+         blockCategories.sprite[0], // set mySprite to sprite of kind Player
+         blockCategories.sprite[1], // set mySprite position to x 0 y 0
+         blockCategories.variables[0], // set gfg to 0
+         blockCategories.scene[0], // set background image to
+         blockCategories.events[1], // on game update
+         blockCategories.game[0], // game over WIN
+         blockCategories.sprite[4] // animate mySprite with fly to center
+       ];
+       
+       // Add event blocks first
+       sampleBlocks.filter(block => block.type === 'event').forEach(block => {
+         addBlockToWorkspace(block);
+       });
+       
+       // Then add action blocks to the first event block
+       const firstEventBlock = document.querySelector('.block.event');
+       if (firstEventBlock) {
+         const nestContainer = firstEventBlock.querySelector('.block-container');
+         if (nestContainer) {
+           sampleBlocks.filter(block => block.type !== 'event').forEach(block => {
+             const nestedBlock = document.createElement('div');
+             nestedBlock.className = `block ${block.color} nested`;
+             nestedBlock.textContent = block.text;
+             nestedBlock.dataset.block = JSON.stringify(block);
+             nestContainer.appendChild(nestedBlock);
+           });
+         }
+       }
       
       // Initialize text editor functionality
       const runBtn = document.getElementById('run-btn');
