@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coding Game - JavaScript Editor</title>
+  <title>Code Studio - Professional Development Environment</title>
   <style>
     * {
       margin: 0;
@@ -40,13 +40,46 @@
     }
 
     .container {
-      max-width: 1400px;
+      max-width: 1600px;
       margin: 0 auto;
       padding: 2rem;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
       min-height: calc(100vh - 120px);
+    }
+    
+    .mode-switcher {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    
+    .mode-btn {
+      padding: 0.75rem 1.5rem;
+      border: 2px solid #3498db;
+      background: transparent;
+      color: #3498db;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .mode-btn.active {
+      background: #3498db;
+      color: white;
+    }
+    
+    .mode-btn:hover {
+      background: #3498db;
+      color: white;
+      transform: translateY(-2px);
     }
 
     .editor-section {
@@ -96,6 +129,120 @@
     .btn-primary:hover {
       background: #2980b9;
       transform: translateY(-1px);
+    }
+    
+    .block-coding {
+      display: none;
+    }
+    
+    .block-coding.active {
+      display: block;
+    }
+    
+    .blocks-container {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .block-category {
+      margin-bottom: 1rem;
+    }
+    
+    .block-category h3 {
+      color: #2c3e50;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 0.25rem;
+    }
+    
+    .block {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      margin: 0.25rem;
+      background: #3498db;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    
+    .block:hover {
+      background: #2980b9;
+      transform: translateY(-1px);
+    }
+    
+    .block.logic {
+      background: #e74c3c;
+    }
+    
+    .block.logic:hover {
+      background: #c0392b;
+    }
+    
+    .block.loop {
+      background: #f39c12;
+    }
+    
+    .block.loop:hover {
+      background: #e67e22;
+    }
+    
+    .block.function {
+      background: #9b59b6;
+    }
+    
+    .block.function:hover {
+      background: #8e44ad;
+    }
+    
+    .block.variable {
+      background: #27ae60;
+    }
+    
+    .block.variable:hover {
+      background: #229954;
+    }
+    
+    .block.output {
+      background: #34495e;
+    }
+    
+    .block.output:hover {
+      background: #2c3e50;
+    }
+    
+    .code-workspace {
+      background: #fff;
+      border: 2px dashed #bdc3c7;
+      border-radius: 8px;
+      min-height: 200px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .code-workspace.dragover {
+      border-color: #3498db;
+      background: #ecf0f1;
+    }
+    
+    .generated-code {
+      background: #2c3e50;
+      color: #ecf0f1;
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin-top: 1rem;
+      max-height: 200px;
+      overflow-y: auto;
     }
 
     .btn-success {
@@ -426,12 +573,17 @@
 </head>
 <body>
   <div class="header">
-    <h1>🚀 JavaScript Code Editor</h1>
-    <p>Write, run, and share your JavaScript code!</p>
+    <h1>🚀 Code Studio - Professional Development Environment</h1>
+    <p>Write, run, and share your JavaScript code with text editor or block coding!</p>
+  </div>
+
+  <div class="mode-switcher">
+    <button class="mode-btn active" onclick="switchMode('text')">📝 Text Editor</button>
+    <button class="mode-btn" onclick="switchMode('blocks')">🧱 Block Coding</button>
   </div>
 
   <div class="container">
-    <div class="editor-section">
+    <div class="editor-section text-editor active">
       <div class="editor-header">
         <div class="editor-title">📝 Code Editor</div>
         <div class="editor-controls">
@@ -465,6 +617,63 @@ const numbers = [1, 2, 3, 4, 5];
 const doubled = numbers.map(n => n * 2);
 console.log('Original:', numbers);
 console.log('Doubled:', doubled);</textarea>
+    </div>
+    
+    <div class="editor-section block-coding">
+      <div class="editor-header">
+        <div class="editor-title">🧱 Block Coding Studio</div>
+        <div class="editor-controls">
+          <button class="btn btn-primary" onclick="generateCode()">🔧 Generate Code</button>
+          <button class="btn btn-success" onclick="saveBlockProject()">💾 Save</button>
+          <button class="btn btn-primary" onclick="publishBlockProject()">📤 Publish</button>
+        </div>
+      </div>
+      
+      <div class="blocks-container">
+        <div class="block-category">
+          <h3>Output</h3>
+          <div class="block output" draggable="true" data-block="console.log('Hello World');">console.log</div>
+          <div class="block output" draggable="true" data-block="alert('Message');">alert</div>
+          <div class="block output" draggable="true" data-block="document.write('Text');">document.write</div>
+        </div>
+        
+        <div class="block-category">
+          <h3>Variables</h3>
+          <div class="block variable" draggable="true" data-block="let name = 'value';" data-input="name">let variable</div>
+          <div class="block variable" draggable="true" data-block="const PI = 3.14;" data-input="PI">const variable</div>
+          <div class="block variable" draggable="true" data-block="var oldVar = 'value';" data-input="oldVar">var variable</div>
+        </div>
+        
+        <div class="block-category">
+          <h3>Logic</h3>
+          <div class="block logic" draggable="true" data-block="if (condition) {&#10;  // code&#10;}">if statement</div>
+          <div class="block logic" draggable="true" data-block="if (condition) {&#10;  // code&#10;} else {&#10;  // code&#10;}">if-else</div>
+          <div class="block logic" draggable="true" data-block="switch(value) {&#10;  case 1:&#10;    break;&#10;  default:&#10;    break;&#10;}">switch</div>
+        </div>
+        
+        <div class="block-category">
+          <h3>Loops</h3>
+          <div class="block loop" draggable="true" data-block="for (let i = 0; i < 10; i++) {&#10;  // code&#10;}">for loop</div>
+          <div class="block loop" draggable="true" data-block="while (condition) {&#10;  // code&#10;}">while loop</div>
+          <div class="block loop" draggable="true" data-block="do {&#10;  // code&#10;} while (condition);">do-while</div>
+        </div>
+        
+        <div class="block-category">
+          <h3>Functions</h3>
+          <div class="block function" draggable="true" data-block="function myFunction() {&#10;  // code&#10;}">function</div>
+          <div class="block function" draggable="true" data-block="const myFunction = () => {&#10;  // code&#10;};">arrow function</div>
+          <div class="block function" draggable="true" data-block="return value;">return</div>
+        </div>
+      </div>
+      
+      <div class="code-workspace" id="code-workspace">
+        <p style="color: #7f8c8d; text-align: center; margin-top: 2rem;">Drag blocks here to build your code!</p>
+      </div>
+      
+      <div class="generated-code" id="generated-code" style="display: none;">
+        <strong>Generated JavaScript Code:</strong>
+        <pre id="code-output"></pre>
+      </div>
     </div>
 
     <div class="output-section">
@@ -922,6 +1131,147 @@ main();`
       }
     }
 
+    // Block coding functionality
+    let currentMode = 'text';
+    let blockCode = [];
+
+    // Switch between text editor and block coding
+    function switchMode(mode) {
+      currentMode = mode;
+      
+      // Update button states
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      // Show/hide sections
+      document.querySelectorAll('.editor-section').forEach(section => {
+        section.style.display = 'none';
+      });
+      
+      if (mode === 'text') {
+        document.querySelector('.text-editor').style.display = 'block';
+      } else {
+        document.querySelector('.block-coding').style.display = 'block';
+      }
+    }
+
+    // Initialize drag and drop for blocks
+    function initBlockCoding() {
+      const blocks = document.querySelectorAll('.block');
+      const workspace = document.getElementById('code-workspace');
+      
+      blocks.forEach(block => {
+        block.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', block.dataset.block);
+          e.dataTransfer.setData('text/html', block.outerHTML);
+        });
+      });
+      
+      workspace.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        workspace.classList.add('dragover');
+      });
+      
+      workspace.addEventListener('dragleave', () => {
+        workspace.classList.remove('dragover');
+      });
+      
+      workspace.addEventListener('drop', (e) => {
+        e.preventDefault();
+        workspace.classList.remove('dragover');
+        
+        const blockCode = e.dataTransfer.getData('text/plain');
+        const blockHTML = e.dataTransfer.getData('text/html');
+        
+        // Create a new block in the workspace
+        const newBlock = document.createElement('div');
+        newBlock.className = 'block';
+        newBlock.innerHTML = blockHTML;
+        newBlock.style.margin = '0.5rem';
+        newBlock.style.cursor = 'pointer';
+        newBlock.onclick = () => newBlock.remove();
+        
+        workspace.appendChild(newBlock);
+        
+        // Store the code
+        blockCode.push(blockCode);
+      });
+    }
+
+    // Generate JavaScript code from blocks
+    function generateCode() {
+      const workspace = document.getElementById('code-workspace');
+      const blocks = workspace.querySelectorAll('.block');
+      let generatedCode = '';
+      
+      blocks.forEach(block => {
+        const code = block.dataset.block;
+        if (code) {
+          generatedCode += code + '\n';
+        }
+      });
+      
+      if (generatedCode.trim()) {
+        document.getElementById('code-output').textContent = generatedCode;
+        document.getElementById('generated-code').style.display = 'block';
+        
+        // Also update the text editor
+        document.getElementById('code-input').value = generatedCode;
+      } else {
+        alert('No blocks in workspace!');
+      }
+    }
+
+    // Save block project
+    function saveBlockProject() {
+      const projectName = prompt('Enter a name for your block project:');
+      if (!projectName) return;
+
+      const project = {
+        name: projectName,
+        code: document.getElementById('code-input').value,
+        date: new Date().toISOString(),
+        id: Date.now(),
+        type: 'block'
+      };
+
+      const savedProjects = JSON.parse(localStorage.getItem('savedProjects') || '[]');
+      savedProjects.push(project);
+      localStorage.setItem('savedProjects', JSON.stringify(savedProjects));
+      
+      alert('Block project saved!');
+    }
+
+    // Publish block project
+    async function publishBlockProject() {
+      const projectName = prompt('Enter a name for your block project:');
+      if (!projectName) return;
+
+      const projectDescription = prompt('Enter a description for your project:');
+      if (!projectDescription) return;
+
+      try {
+        const project = {
+          name: projectName,
+          description: projectDescription,
+          code: document.getElementById('code-input').value,
+          language: 'javascript',
+          author: 'Block Coder',
+          publishedAt: new Date().toISOString(),
+          downloads: 0,
+          likes: 0
+        };
+
+        await window.projectManager.publishProject(project);
+        alert('Block project published successfully!');
+      } catch (error) {
+        console.error('❌ Error publishing block project:', error);
+        alert('Failed to publish project. Please try again.');
+      }
+    }
+
     // Save current project locally
     function saveCurrentProject() {
       const projectName = prompt('Enter a name for your project:');
@@ -993,6 +1343,7 @@ main();`
     // Initialize
     loadSavedProjects();
     loadPublishedProjects();
+    initBlockCoding();
   </script>
 </body>
 </html> 

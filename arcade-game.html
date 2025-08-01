@@ -82,6 +82,7 @@
     .back-link { 
       display: block; 
       text-align: center; 
+      
       margin-top: 2em;
       color: #1976d2;
       text-decoration: none;
@@ -518,7 +519,7 @@
     function initSnakeGame(ctx, canvas) {
       // Clear any existing game loops
       if (window.snakeGameLoopId) {
-        clearTimeout(window.snakeGameLoopId);
+        cancelAnimationFrame(window.snakeGameLoopId);
         window.snakeGameLoopId = null;
       }
       
@@ -528,7 +529,8 @@
       let dy = 0;
       gameScore = 0;
       gameRunning = true;
-      let gameLoopId = null;
+      let lastTime = 0;
+      const gameSpeed = 150; // milliseconds between moves
       
       function drawSnake() {
         ctx.fillStyle = '#4CAF50';
@@ -583,35 +585,37 @@
         return false;
       }
       
-      function gameLoop() {
+      function gameLoop(currentTime) {
         if (!gameRunning) {
-          if (gameLoopId) {
-            clearTimeout(gameLoopId);
-            gameLoopId = null;
+          if (window.snakeGameLoopId) {
+            cancelAnimationFrame(window.snakeGameLoopId);
+            window.snakeGameLoopId = null;
           }
           return;
         }
         
-        // Clear canvas completely
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        moveSnake();
-        
-        if (checkCollision()) {
-          gameOver();
-          return;
+        // Only move snake at specific intervals
+        if (currentTime - lastTime > gameSpeed) {
+          // Clear canvas completely
+          ctx.fillStyle = '#000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          moveSnake();
+          
+          if (checkCollision()) {
+            gameOver();
+            return;
+          }
+          
+          drawSnake();
+          drawFood();
+          
+          document.getElementById('game-score').textContent = `Score: ${gameScore}`;
+          
+          lastTime = currentTime;
         }
         
-        drawSnake();
-        drawFood();
-        
-        document.getElementById('game-score').textContent = `Score: ${gameScore}`;
-        
-        // Speed up as score increases
-        const speed = Math.max(50, 150 - Math.floor(gameScore / 10) * 10);
-        gameLoopId = setTimeout(gameLoop, speed);
-        window.snakeGameLoopId = gameLoopId;
+        window.snakeGameLoopId = requestAnimationFrame(gameLoop);
       }
       
       // Clear any existing event listeners
@@ -1338,7 +1342,7 @@
     function initTetrisGame(ctx, canvas) {
       // Clear any existing game loops
       if (window.tetrisGameLoopId) {
-        clearTimeout(window.tetrisGameLoopId);
+        cancelAnimationFrame(window.tetrisGameLoopId);
         window.tetrisGameLoopId = null;
       }
       
@@ -1467,8 +1471,8 @@
         
         document.getElementById('game-score').textContent = `Score: ${gameScore}`;
         
-        // Use setTimeout for game loop with proper ID tracking
-        window.tetrisGameLoopId = setTimeout(gameLoop, 500);
+        // Use requestAnimationFrame for smoother game loop
+        window.tetrisGameLoopId = requestAnimationFrame(gameLoop);
       }
       
       document.addEventListener('keydown', (e) => {
@@ -1579,7 +1583,13 @@
       }
       
       function gameLoop() {
-        if (!gameRunning) return;
+        if (!gameRunning) {
+          if (window.hairGameLoopId) {
+            cancelAnimationFrame(window.hairGameLoopId);
+            window.hairGameLoopId = null;
+          }
+          return;
+        }
         
         ctx.fillStyle = '#F0F8FF';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1599,7 +1609,7 @@
           return;
         }
         
-        window.hairGameLoopId = setTimeout(gameLoop, 1000);
+        window.hairGameLoopId = requestAnimationFrame(gameLoop);
       }
       
       // Remove existing event listeners
@@ -1630,7 +1640,7 @@
     function initZombieGame(ctx, canvas) {
       // Clear any existing game loops
       if (window.zombieGameLoopId) {
-        clearTimeout(window.zombieGameLoopId);
+        cancelAnimationFrame(window.zombieGameLoopId);
         window.zombieGameLoopId = null;
       }
       
@@ -1701,7 +1711,13 @@
       }
       
       function gameLoop() {
-        if (!gameRunning) return;
+        if (!gameRunning) {
+          if (window.zombieGameLoopId) {
+            cancelAnimationFrame(window.zombieGameLoopId);
+            window.zombieGameLoopId = null;
+          }
+          return;
+        }
         
         ctx.fillStyle = '#2C3E50';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1727,7 +1743,7 @@
           return;
         }
         
-        window.zombieGameLoopId = setTimeout(gameLoop, 50);
+        window.zombieGameLoopId = requestAnimationFrame(gameLoop);
       }
       
       // Remove existing event listeners
@@ -1753,7 +1769,7 @@
     function initCookingGame(ctx, canvas) {
       // Clear any existing game loops
       if (window.cookingGameLoopId) {
-        clearTimeout(window.cookingGameLoopId);
+        cancelAnimationFrame(window.cookingGameLoopId);
         window.cookingGameLoopId = null;
       }
       
@@ -1845,7 +1861,7 @@
           return;
         }
         
-        window.cookingGameLoopId = setTimeout(gameLoop, 50);
+        window.cookingGameLoopId = requestAnimationFrame(gameLoop);
       }
       
       // Remove existing event listeners
@@ -1865,7 +1881,7 @@
     function initRacingGame(ctx, canvas) {
       // Clear any existing game loops
       if (window.racingGameLoopId) {
-        clearTimeout(window.racingGameLoopId);
+        cancelAnimationFrame(window.racingGameLoopId);
         window.racingGameLoopId = null;
       }
       
@@ -1959,7 +1975,7 @@
           return;
         }
         
-        window.racingGameLoopId = setTimeout(gameLoop, 50);
+        window.racingGameLoopId = requestAnimationFrame(gameLoop);
       }
       
       // Remove existing event listeners
@@ -2327,19 +2343,65 @@
         tokensEarned = Math.max(1, Math.floor(gameScore / 100));
       }
       
-      if (tokensEarned > 0) {
+      if (tokensEarned > 0 && currentEmail) {
         // Award tokens for good performance
         getTokenCount(currentEmail).then(currentTokens => {
           const newTokens = currentTokens + tokensEarned;
           setTokenCount(currentEmail, newTokens).then(() => {
             updateTokenDisplay(currentEmail);
             alert(`Game Over! Final Score: ${gameScore}\nYou earned ${tokensEarned} bonus tokens!`);
-            exitGame();
+            // Don't call exitGame() here - just clean up and return to main menu
+            cleanupGame();
           });
         });
       } else {
         alert(`Game Over! Final Score: ${gameScore}`);
-        exitGame();
+        // Don't call exitGame() here - just clean up and return to main menu
+        cleanupGame();
+      }
+    }
+    
+    function cleanupGame() {
+      // Clear any game loops
+      if (window.gameLoopId) {
+        clearTimeout(window.gameLoopId);
+        window.gameLoopId = null;
+      }
+      if (window.snakeGameLoopId) {
+        clearTimeout(window.snakeGameLoopId);
+        window.snakeGameLoopId = null;
+      }
+      if (window.tetrisGameLoopId) {
+        clearTimeout(window.tetrisGameLoopId);
+        window.tetrisGameLoopId = null;
+      }
+      if (window.hairGameLoopId) {
+        clearTimeout(window.hairGameLoopId);
+        window.hairGameLoopId = null;
+      }
+      if (window.zombieGameLoopId) {
+        clearTimeout(window.zombieGameLoopId);
+        window.zombieGameLoopId = null;
+      }
+      if (window.cookingGameLoopId) {
+        clearTimeout(window.cookingGameLoopId);
+        window.cookingGameLoopId = null;
+      }
+      if (window.racingGameLoopId) {
+        clearTimeout(window.racingGameLoopId);
+        window.racingGameLoopId = null;
+      }
+      
+      document.getElementById('game-area').classList.remove('active');
+      document.getElementById('main-container').style.display = 'block';
+      currentGame = null;
+      
+      // Update token display without resetting
+      if (currentEmail) {
+        getTokenCount(currentEmail).then(tokens => {
+          console.log('🔄 Current tokens after game cleanup:', tokens);
+          updateTokenDisplay(currentEmail);
+        });
       }
     }
 
