@@ -375,6 +375,67 @@
       min-height: 40px;
     }
 
+    /* Examples Section */
+    .examples-section {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .examples-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .example-btn {
+      padding: 0.75rem;
+      background: rgba(52, 152, 219, 0.2);
+      border: 1px solid rgba(52, 152, 219, 0.3);
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+    }
+
+    .example-btn:hover {
+      background: rgba(52, 152, 219, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* Improve block responsiveness */
+    .block {
+      transition: all 0.2s ease;
+    }
+
+    .block:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .block:active {
+      transform: scale(0.98);
+    }
+
+    .category-item {
+      transition: all 0.2s ease;
+    }
+
+    .category-item:hover {
+      transform: translateX(4px);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
     /* Snap indicators */
     .block.snap-target {
       border: 2px dashed #FFD700;
@@ -882,6 +943,17 @@
          <div id="block-workspace">
            <!-- Event blocks will be added here -->
          </div>
+         
+         <!-- Examples Section -->
+         <div class="examples-section">
+           <div class="examples-title">💡 Quick Examples</div>
+           <div class="examples-grid">
+             <button class="example-btn" onclick="loadExample('hello')">👋 Hello World</button>
+             <button class="example-btn" onclick="loadExample('game')">🎮 Simple Game</button>
+             <button class="example-btn" onclick="loadExample('animation')">✨ Animation</button>
+             <button class="example-btn" onclick="loadExample('math')">🧮 Calculator</button>
+           </div>
+         </div>
        </div>
      </div>
   </div>
@@ -921,7 +993,33 @@ console.log(greet('Friend'));
 const numbers = [1, 2, 3, 4, 5];
 const doubled = numbers.map(n => n * 2);
 console.log('Original:', numbers);
-console.log('Doubled:', doubled);</textarea>
+console.log('Doubled:', doubled);
+
+// - Game example
+function createGame() {
+  let score = 0;
+  let lives = 3;
+  
+  function addPoints(points) {
+    score += points;
+    console.log(`Score: ${score}`);
+  }
+  
+  function loseLife() {
+    lives--;
+    console.log(`Lives: ${lives}`);
+    if (lives <= 0) {
+      console.log('Game Over!');
+    }
+  }
+  
+  return { addPoints, loseLife, score, lives };
+}
+
+const game = createGame();
+game.addPoints(100);
+game.addPoints(50);
+game.loseLife();</textarea>
      </div>
 
      <div class="output-section">
@@ -1644,6 +1742,146 @@ console.log('Doubled:', doubled);</textarea>
        // Initialize projects
        loadSavedProjects();
        loadPublishedProjects();
+       
+       // Example functions - moved to global scope
+       window.loadExample = function(exampleType) {
+         const examples = {
+           hello: {
+             code: `// Hello World Example
+console.log('Hello, World!');
+console.log('Welcome to JavaScript coding!');
+
+// Variables
+let name = 'Coder';
+let age = 15;
+
+// Template literals
+console.log(\`Hello, \${name}! You are \${age} years old.\`);
+
+// Functions
+function greet(person) {
+  return \`Hello, \${person}!\`;
+}
+
+console.log(greet('Friend'));`,
+             blocks: [
+               { type: 'event', text: 'When program starts', color: 'event', code: '// Program starts here' },
+               { type: 'info', text: 'Say Hello World', color: 'info', code: "console.log('Hello, World!');" },
+               { type: 'variables', text: 'Create variable name', color: 'variables', code: "let name = 'Coder';" },
+               { type: 'info', text: 'Say hello with name', color: 'info', code: "console.log(`Hello, ${name}!`);" }
+             ]
+           },
+           game: {
+             code: `// Simple Game Example
+let score = 0;
+let lives = 3;
+
+console.log('Game started!');
+
+function addPoints(points) {
+  score += points;
+  console.log(\`Score: \${score}\`);
+}
+
+function loseLife() {
+  lives--;
+  console.log(\`Lives: \${lives}\`);
+  if (lives <= 0) {
+    console.log('Game Over!');
+  }
+}
+
+// Game actions
+addPoints(100);
+addPoints(50);
+loseLife();
+addPoints(25);`,
+             blocks: [
+               { type: 'event', text: 'When program starts', color: 'event', code: '// Game starts here' },
+               { type: 'variables', text: 'Create score variable', color: 'variables', code: 'let score = 0;' },
+               { type: 'variables', text: 'Create lives variable', color: 'variables', code: 'let lives = 3;' },
+               { type: 'info', text: 'Display score', color: 'info', code: 'console.log(`Score: ${score}`);' },
+               { type: 'logic', text: 'If lives <= 0', color: 'logic', code: 'if (lives <= 0) { console.log("Game Over!"); }' }
+             ]
+           },
+           animation: {
+             code: `// Animation Example
+let position = 0;
+let direction = 1;
+
+console.log('Animation started!');
+
+function animate() {
+  position += direction;
+  console.log(\`Position: \${position}\`);
+  
+  if (position >= 10 || position <= 0) {
+    direction *= -1;
+    console.log('Direction changed!');
+  }
+}
+
+// Run animation
+for (let i = 0; i < 5; i++) {
+  animate();
+}`,
+             blocks: [
+               { type: 'event', text: 'When program starts', color: 'event', code: '// Animation starts here' },
+               { type: 'variables', text: 'Create position variable', color: 'variables', code: 'let position = 0;' },
+               { type: 'loops', text: 'Repeat 5 times', color: 'loops', code: 'for (let i = 0; i < 5; i++) {' },
+               { type: 'math', text: 'Add 1 to position', color: 'math', code: 'position += 1;' },
+               { type: 'info', text: 'Display position', color: 'info', code: 'console.log(`Position: ${position}`);' }
+             ]
+           },
+           math: {
+             code: `// Calculator Example
+function add(a, b) {
+  return a + b;
+}
+
+function multiply(a, b) {
+  return a * b;
+}
+
+function divide(a, b) {
+  if (b === 0) {
+    console.log('Error: Cannot divide by zero!');
+    return null;
+  }
+  return a / b;
+}
+
+// Test calculations
+console.log('Calculator ready!');
+console.log('5 + 3 =', add(5, 3));
+console.log('4 * 6 =', multiply(4, 6));
+console.log('15 / 3 =', divide(15, 3));`,
+             blocks: [
+               { type: 'event', text: 'When program starts', color: 'event', code: '// Calculator starts here' },
+               { type: 'math', text: 'Add two numbers', color: 'math', code: 'function add(a, b) { return a + b; }' },
+               { type: 'math', text: 'Multiply two numbers', color: 'math', code: 'function multiply(a, b) { return a * b; }' },
+               { type: 'info', text: 'Display result', color: 'info', code: 'console.log("Result:", result);' }
+             ]
+           }
+         };
+
+         const example = examples[exampleType];
+         if (example) {
+           // Clear current workspace
+           document.getElementById('block-workspace').innerHTML = '';
+           workspaceBlocks = [];
+           
+           // Add example blocks
+           example.blocks.forEach(block => {
+             addBlockToWorkspace(block);
+           });
+           
+           // Update generated code
+           updateGeneratedCode();
+           
+           alert(`Loaded ${exampleType} example!`);
+         }
+       };
        
        // Debug: Check if project manager is loaded
        console.log('🔍 Project Manager loaded:', window.projectManager);
