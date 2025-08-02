@@ -1468,12 +1468,14 @@ console.log('Doubled:', doubled);</textarea>
          }
        }
 
-       // Load published projects from cloud
-       async function loadPublishedProjects() {
-         try {
-           console.log('🔄 Starting to load published projects...');
-           publishedProjects = await window.projectManager.getPublishedProjects();
-           console.log('🔄 Received projects:', publishedProjects);
+                // Load published projects from cloud
+         async function loadPublishedProjects() {
+           try {
+             console.log('🔄 Starting to load published projects...');
+             publishedProjects = await window.projectManager.getPublishedProjects();
+             console.log('🔄 Received projects:', publishedProjects);
+             console.log('🔄 Projects keys:', Object.keys(publishedProjects));
+             console.log('🔄 Projects values:', Object.values(publishedProjects));
            
            const projectIds = Object.keys(publishedProjects);
            
