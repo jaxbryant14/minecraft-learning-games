@@ -431,10 +431,207 @@
       transition: all 0.2s ease;
     }
 
-    .category-item:hover {
-      transform: translateX(4px);
-      background: rgba(255, 255, 255, 0.1);
-    }
+         .category-item:hover {
+       transform: translateX(4px);
+       background: rgba(255, 255, 255, 0.1);
+     }
+
+     /* Category rollout system */
+     .category-arrow {
+       margin-left: auto;
+       transition: transform 0.3s ease;
+     }
+
+     .category-item.expanded .category-arrow {
+       transform: rotate(180deg);
+     }
+
+     .category-blocks {
+       background: rgba(255, 255, 255, 0.05);
+       border-radius: 6px;
+       margin: 0.25rem 0;
+       padding: 0.5rem;
+       border-left: 3px solid rgba(255, 255, 255, 0.2);
+     }
+
+     .block-item {
+       background: rgba(255, 255, 255, 0.1);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       border-radius: 6px;
+       padding: 0.5rem;
+       margin: 0.25rem 0;
+       cursor: grab;
+       transition: all 0.2s ease;
+       font-size: 0.85rem;
+       color: #fff;
+     }
+
+     .block-item:hover {
+       background: rgba(255, 255, 255, 0.2);
+       transform: translateX(4px);
+     }
+
+     .block-item:active {
+       cursor: grabbing;
+     }
+
+     /* Drawing Tools */
+     .drawing-tools {
+       background: rgba(255, 255, 255, 0.05);
+       border-radius: 8px;
+       padding: 1rem;
+       margin-bottom: 1rem;
+       border: 1px solid rgba(255, 255, 255, 0.1);
+     }
+
+     .tools-header {
+       font-size: 1rem;
+       font-weight: 600;
+       margin-bottom: 1rem;
+       color: #fff;
+     }
+
+     .tool-buttons {
+       display: flex;
+       gap: 0.5rem;
+       margin-bottom: 1rem;
+       flex-wrap: wrap;
+     }
+
+     .tool-btn {
+       width: 40px;
+       height: 40px;
+       border: 2px solid rgba(255, 255, 255, 0.3);
+       background: rgba(255, 255, 255, 0.1);
+       border-radius: 6px;
+       cursor: pointer;
+       transition: all 0.2s;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 1.2rem;
+     }
+
+     .tool-btn.active {
+       background: #3498db;
+       border-color: #3498db;
+     }
+
+     .tool-btn:hover {
+       background: rgba(255, 255, 255, 0.2);
+       transform: scale(1.1);
+     }
+
+     .color-palette {
+       display: grid;
+       grid-template-columns: repeat(8, 1fr);
+       gap: 0.25rem;
+     }
+
+     .color-swatch {
+       width: 20px;
+       height: 20px;
+       border-radius: 4px;
+       cursor: pointer;
+       border: 2px solid rgba(255, 255, 255, 0.3);
+       transition: all 0.2s;
+     }
+
+     .color-swatch:hover {
+       transform: scale(1.2);
+       border-color: #fff;
+     }
+
+     .color-swatch.transparent { background: repeating-conic-gradient(#ccc 0% 25%, transparent 0% 50%) 50% / 20% 20%; }
+     .color-swatch.white { background: #fff; }
+     .color-swatch.red { background: #ff0000; }
+     .color-swatch.pink { background: #ff69b4; }
+     .color-swatch.orange { background: #ffa500; }
+     .color-swatch.yellow { background: #ffff00; }
+     .color-swatch.lightgreen { background: #90ee90; }
+     .color-swatch.darkgreen { background: #228b22; }
+     .color-swatch.lightblue { background: #87ceeb; }
+     .color-swatch.darkblue { background: #0000ff; }
+     .color-swatch.purple { background: #800080; }
+     .color-swatch.lightpurple { background: #dda0dd; }
+     .color-swatch.brown { background: #a0522d; }
+     .color-swatch.beige { background: #f5f5dc; }
+     .color-swatch.black { background: #000; }
+
+     /* Game Canvas and Controls */
+     #game-canvas {
+       border: 2px solid #333;
+       border-radius: 8px;
+       background: #000;
+       display: block;
+       margin: 0 auto;
+     }
+
+     .game-overlay {
+       position: absolute;
+       top: 10px;
+       left: 10px;
+       right: 10px;
+       pointer-events: none;
+     }
+
+     .game-info {
+       display: flex;
+       justify-content: space-between;
+       color: #fff;
+       font-weight: 600;
+       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+     }
+
+     .joystick-container {
+       position: relative;
+       width: 80px;
+       height: 80px;
+     }
+
+     .joystick {
+       width: 80px;
+       height: 80px;
+       border-radius: 50%;
+       background: rgba(255, 255, 255, 0.2);
+       border: 2px solid rgba(255, 255, 255, 0.3);
+       position: relative;
+       cursor: pointer;
+     }
+
+     .joystick-knob {
+       width: 30px;
+       height: 30px;
+       border-radius: 50%;
+       background: #fff;
+       position: absolute;
+       top: 50%;
+       left: 50%;
+       transform: translate(-50%, -50%);
+       transition: all 0.1s ease;
+     }
+
+     .action-buttons {
+       display: flex;
+       gap: 1rem;
+     }
+
+     .action-btn {
+       width: 50px;
+       height: 50px;
+       border-radius: 50%;
+       background: rgba(255, 255, 255, 0.2);
+       border: 2px solid rgba(255, 255, 255, 0.3);
+       color: #fff;
+       font-weight: 600;
+       cursor: pointer;
+       transition: all 0.2s;
+     }
+
+     .action-btn:active {
+       background: rgba(255, 255, 255, 0.4);
+       transform: scale(0.95);
+     }
 
     /* Snap indicators */
     .block.snap-target {
@@ -811,7 +1008,7 @@
   <div class="header">
     <h1>🚀 Code Studio - Professional Development Environment</h1>
     <p>Create games and applications with visual block coding or text programming!</p>
-  </div>
+    </div>
 
   <div class="mode-switcher">
     <button class="mode-btn active" onclick="switchMode('blocks')">🧱 Block Coding</button>
@@ -823,29 +1020,67 @@
     <div class="game-emulator">
       <div class="game-screen">
         <div class="sound-toggle">🔇</div>
-        <div id="game-display">Game Preview</div>
-      </div>
-      
-      <div class="game-controls">
-        <div class="d-pad"></div>
-        <div class="action-buttons">
-          <button class="action-btn btn-a">A</button>
-          <button class="action-btn btn-b">B</button>
+        <canvas id="game-canvas" width="320" height="240"></canvas>
+        <div class="game-overlay">
+          <div class="game-info">
+            <span id="game-score">Score: 0</span>
+            <span id="game-lives">Lives: 3</span>
+          </div>
         </div>
       </div>
       
-      <button class="menu-btn">Menu</button>
-      <button class="menu-btn">🔄</button>
+      <div class="game-controls">
+        <div class="joystick-container">
+          <div class="joystick" id="joystick">
+            <div class="joystick-knob" id="joystick-knob"></div>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button class="action-btn btn-a" id="btn-a">A</button>
+          <button class="action-btn btn-b" id="btn-b">B</button>
+        </div>
+      </div>
+      
+      <button class="menu-btn" onclick="toggleGameMenu()">Menu</button>
+      <button class="menu-btn" onclick="resetGame()">🔄</button>
       
       <div class="microsoft-logo">Microsoft</div>
       
       <div class="emulator-toolbar">
-        <button class="toolbar-btn">🔄</button>
-        <button class="toolbar-btn">🐛</button>
-        <button class="toolbar-btn">🔊</button>
-        <button class="toolbar-btn">⌨️</button>
-        <button class="toolbar-btn">📷</button>
-        <button class="toolbar-btn">⛶</button>
+        <button class="toolbar-btn" onclick="toggleSound()">🔊</button>
+        <button class="toolbar-btn" onclick="toggleFullscreen()">⛶</button>
+        <button class="toolbar-btn" onclick="takeScreenshot()">📷</button>
+        <button class="toolbar-btn" onclick="toggleDebug()">🐛</button>
+      </div>
+    </div>
+
+    <!-- Drawing Tools -->
+    <div class="drawing-tools">
+      <div class="tools-header">🎨 Drawing Tools</div>
+      <div class="tool-buttons">
+        <button class="tool-btn active" onclick="selectTool('pencil')" title="Pencil">✏️</button>
+        <button class="tool-btn" onclick="selectTool('square')" title="Square">⬜</button>
+        <button class="tool-btn" onclick="selectTool('circle')" title="Circle">⭕</button>
+        <button class="tool-btn" onclick="selectTool('line')" title="Line">➖</button>
+        <button class="tool-btn" onclick="selectTool('fill')" title="Fill">🖌️</button>
+        <button class="tool-btn" onclick="selectTool('select')" title="Select">👆</button>
+      </div>
+      <div class="color-palette">
+        <div class="color-swatch transparent" onclick="selectColor('transparent')"></div>
+        <div class="color-swatch white" onclick="selectColor('white')"></div>
+        <div class="color-swatch red" onclick="selectColor('red')"></div>
+        <div class="color-swatch pink" onclick="selectColor('pink')"></div>
+        <div class="color-swatch orange" onclick="selectColor('orange')"></div>
+        <div class="color-swatch yellow" onclick="selectColor('yellow')"></div>
+        <div class="color-swatch lightgreen" onclick="selectColor('lightgreen')"></div>
+        <div class="color-swatch darkgreen" onclick="selectColor('darkgreen')"></div>
+        <div class="color-swatch lightblue" onclick="selectColor('lightblue')"></div>
+        <div class="color-swatch darkblue" onclick="selectColor('darkblue')"></div>
+        <div class="color-swatch purple" onclick="selectColor('purple')"></div>
+        <div class="color-swatch lightpurple" onclick="selectColor('lightpurple')"></div>
+        <div class="color-swatch brown" onclick="selectColor('brown')"></div>
+        <div class="color-swatch beige" onclick="selectColor('beige')"></div>
+        <div class="color-swatch black" onclick="selectColor('black')"></div>
       </div>
     </div>
 
@@ -856,74 +1091,155 @@
       </div>
       
              <div class="categories-list">
-         <div class="category-item" onclick="showBlocks('events')">
+         <div class="category-item" onclick="toggleCategory('events')">
            <div class="category-icon event">🎯</div>
            <div class="category-text">Events</div>
+           <div class="category-arrow">▼</div>
+         </div>
+         <div class="category-blocks" id="events-blocks" style="display: none;">
+           <div class="block-item" draggable="true" data-block='{"type":"event","text":"When program starts","color":"event","code":"// Program starts here"}'>When program starts</div>
+           <div class="block-item" draggable="true" data-block='{"type":"event","text":"When A button pressed","color":"event","code":"// A button pressed"}'>When A button pressed</div>
+           <div class="block-item" draggable="true" data-block='{"type":"event","text":"When B button pressed","color":"event","code":"// B button pressed"}'>When B button pressed</div>
+           <div class="block-item" draggable="true" data-block='{"type":"event","text":"When sprite overlaps","color":"event","code":"// Sprite overlap detected"}'>When sprite overlaps</div>
          </div>
          
-         <div class="category-item" onclick="showBlocks('sprite')">
+         <div class="category-item" onclick="toggleCategory('sprite')">
            <div class="category-icon sprite">✈️</div>
            <div class="category-text">Sprites</div>
+           <div class="category-arrow">▼</div>
+         </div>
+         <div class="category-blocks" id="sprite-blocks" style="display: none;">
+           <div class="block-item" draggable="true" data-block='{"type":"sprite","text":"Create sprite","color":"sprite","code":"let sprite = createSprite();"}'>Create sprite</div>
+           <div class="block-item" draggable="true" data-block='{"type":"sprite","text":"Set sprite position","color":"sprite","code":"sprite.setPosition(x, y);"}'>Set sprite position</div>
+           <div class="block-item" draggable="true" data-block='{"type":"sprite","text":"Move sprite","color":"sprite","code":"sprite.move(direction);"}'>Move sprite</div>
+           <div class="block-item" draggable="true" data-block='{"type":"sprite","text":"Set sprite image","color":"sprite","code":"sprite.setImage(image);"}'>Set sprite image</div>
          </div>
         
-        <div class="category-item" onclick="showBlocks('controller')">
+        <div class="category-item" onclick="toggleCategory('controller')">
           <div class="category-icon controller">🎮</div>
           <div class="category-text">Controller</div>
+          <div class="category-arrow">▼</div>
+        </div>
+        <div class="category-blocks" id="controller-blocks" style="display: none;">
+          <div class="block-item" draggable="true" data-block='{"type":"controller","text":"Move with buttons","color":"controller","code":"moveWithButtons(sprite);"}'>Move with buttons</div>
+          <div class="block-item" draggable="true" data-block='{"type":"controller","text":"Is A pressed","color":"controller","code":"isButtonPressed('A')"}'>Is A pressed</div>
+          <div class="block-item" draggable="true" data-block='{"type":"controller","text":"Is B pressed","color":"controller","code":"isButtonPressed('B')"}'>Is B pressed</div>
+          <div class="block-item" draggable="true" data-block='{"type":"controller","text":"Get joystick X","color":"controller","code":"getJoystickX()"}'>Get joystick X</div>
+          <div class="block-item" draggable="true" data-block='{"type":"controller","text":"Get joystick Y","color":"controller","code":"getJoystickY()"}'>Get joystick Y</div>
         </div>
         
-        <div class="category-item" onclick="showBlocks('game')">
+        <div class="category-item" onclick="toggleCategory('game')">
           <div class="category-icon game">⚪</div>
           <div class="category-text">Game</div>
+          <div class="category-arrow">▼</div>
+        </div>
+        <div class="category-blocks" id="game-blocks" style="display: none;">
+          <div class="block-item" draggable="true" data-block='{"type":"game","text":"Set score","color":"game","code":"setScore(value);"}'>Set score</div>
+          <div class="block-item" draggable="true" data-block='{"type":"game","text":"Add score","color":"game","code":"addScore(points);"}'>Add score</div>
+          <div class="block-item" draggable="true" data-block='{"type":"game","text":"Set lives","color":"game","code":"setLives(lives);"}'>Set lives</div>
+          <div class="block-item" draggable="true" data-block='{"type":"game","text":"Game over","color":"game","code":"gameOver();"}'>Game over</div>
         </div>
         
-        <div class="category-item" onclick="showBlocks('music')">
-          <div class="category-icon music">🎧</div>
-          <div class="category-text">Music</div>
-        </div>
-        
-        <div class="category-item" onclick="showBlocks('scene')">
+        <div class="category-item" onclick="toggleCategory('scene')">
           <div class="category-icon scene">🌳</div>
           <div class="category-text">Scene</div>
+          <div class="category-arrow">▼</div>
+        </div>
+        <div class="category-blocks" id="scene-blocks" style="display: none;">
+          <div class="block-item" draggable="true" data-block='{"type":"scene","text":"Set background","color":"scene","code":"setBackground(color);"}'>Set background</div>
+          <div class="block-item" draggable="true" data-block='{"type":"scene","text":"Set background image","color":"scene","code":"setBackgroundImage(image);"}'>Set background image</div>
+          <div class="block-item" draggable="true" data-block='{"type":"scene","text":"Camera follow sprite","color":"scene","code":"cameraFollow(sprite);"}'>Camera follow sprite</div>
+          <div class="block-item" draggable="true" data-block='{"type":"scene","text":"Camera shake","color":"scene","code":"cameraShake(intensity, duration);"}'>Camera shake</div>
         </div>
         
-        <div class="category-item" onclick="showBlocks('info')">
+        <div class="category-item" onclick="toggleCategory('info')">
           <div class="category-icon info">👤</div>
           <div class="category-text">Info</div>
+          <div class="category-arrow">▼</div>
+        </div>
+        <div class="category-blocks" id="info-blocks" style="display: none;">
+          <div class="block-item" draggable="true" data-block='{"type":"info","text":"Say hello","color":"info","code":"console.log('Hello!');"}'>Say hello</div>
+          <div class="block-item" draggable="true" data-block='{"type":"info","text":"Show score","color":"info","code":"console.log('Score:', score);"}'>Show score</div>
+          <div class="block-item" draggable="true" data-block='{"type":"info","text":"Show lives","color":"info","code":"console.log('Lives:', lives);"}'>Show lives</div>
+          <div class="block-item" draggable="true" data-block='{"type":"info","text":"Show position","color":"info","code":"console.log('Position:', x, y);"}'>Show position</div>
         </div>
         
-        <div class="category-item" onclick="showBlocks('loops')">
+        <div class="category-item" onclick="toggleCategory('loops')">
           <div class="category-icon loops">🔄</div>
           <div class="category-text">Loops</div>
+          <div class="category-arrow">▼</div>
+        </div>
+        <div class="category-blocks" id="loops-blocks" style="display: none;">
+          <div class="block-item" draggable="true" data-block='{"type":"loops","text":"Repeat 10 times","color":"loops","code":"for(let i = 0; i < 10; i++) {"}'>Repeat 10 times</div>
+          <div class="block-item" draggable="true" data-block='{"type":"loops","text":"Forever","color":"loops","code":"while(true) {"}'>Forever</div>
+          <div class="block-item" draggable="true" data-block='{"type":"loops","text":"Repeat until","color":"loops","code":"while(!condition) {"}'>Repeat until</div>
         </div>
         
-        <div class="category-item" onclick="showBlocks('logic')">
+        <div class="category-item" onclick="toggleCategory('logic')">
           <div class="category-icon logic">🔗</div>
           <div class="category-text">Logic</div>
+          <div class="category-arrow">▼</div>
+        </div>
+        <div class="category-blocks" id="logic-blocks" style="display: none;">
+          <div class="block-item" draggable="true" data-block='{"type":"logic","text":"If then","color":"logic","code":"if(condition) {"}'>If then</div>
+          <div class="block-item" draggable="true" data-block='{"type":"logic","text":"If else","color":"logic","code":"if(condition) { } else {"}'>If else</div>
+          <div class="block-item" draggable="true" data-block='{"type":"logic","text":"Wait 1 second","color":"logic","code":"await sleep(1000);"}'>Wait 1 second</div>
         </div>
         
-        <div class="category-item" onclick="showBlocks('variables')">
+        <div class="category-item" onclick="toggleCategory('variables')">
           <div class="category-icon variables">☰</div>
           <div class="category-text">Variables</div>
+          <div class="category-arrow">▼</div>
+        </div>
+        <div class="category-blocks" id="variables-blocks" style="display: none;">
+          <div class="block-item" draggable="true" data-block='{"type":"variables","text":"Set variable","color":"variables","code":"let variable = value;"}'>Set variable</div>
+          <div class="block-item" draggable="true" data-block='{"type":"variables","text":"Change variable","color":"variables","code":"variable += 1;"}'>Change variable</div>
+          <div class="block-item" draggable="true" data-block='{"type":"variables","text":"Get variable","color":"variables","code":"variable"}'>Get variable</div>
         </div>
         
-        <div class="category-item" onclick="showBlocks('math')">
+        <div class="category-item" onclick="toggleCategory('math')">
           <div class="category-icon math">🧮</div>
           <div class="category-text">Math</div>
+          <div class="category-arrow">▼</div>
+        </div>
+        <div class="category-blocks" id="math-blocks" style="display: none;">
+          <div class="block-item" draggable="true" data-block='{"type":"math","text":"Add numbers","color":"math","code":"a + b"}'>Add numbers</div>
+          <div class="block-item" draggable="true" data-block='{"type":"math","text":"Subtract numbers","color":"math","code":"a - b"}'>Subtract numbers</div>
+          <div class="block-item" draggable="true" data-block='{"type":"math","text":"Multiply numbers","color":"math","code":"a * b"}'>Multiply numbers</div>
+          <div class="block-item" draggable="true" data-block='{"type":"math","text":"Random number","color":"math","code":"Math.random() * max"}'>Random number</div>
         </div>
         
-        <div class="category-item" onclick="showBlocks('animation')">
-          <div class="category-icon animation">🎬</div>
+        <div class="category-item" onclick="toggleCategory('animation')">
+          <div class="category-icon animation">✨</div>
           <div class="category-text">Animation</div>
+          <div class="category-arrow">▼</div>
+        </div>
+        <div class="category-blocks" id="animation-blocks" style="display: none;">
+          <div class="block-item" draggable="true" data-block='{"type":"animation","text":"Animate sprite","color":"animation","code":"sprite.animate();"}'>Animate sprite</div>
+          <div class="block-item" draggable="true" data-block='{"type":"animation","text":"Set animation speed","color":"animation","code":"sprite.setAnimationSpeed(speed);"}'>Set animation speed</div>
+          <div class="block-item" draggable="true" data-block='{"type":"animation","text":"Play sound","color":"animation","code":"playSound(sound);"}'>Play sound</div>
         </div>
         
-        <div class="category-item" onclick="showBlocks('extensions')">
+        <div class="category-item" onclick="toggleCategory('extensions')">
           <div class="category-icon extensions">➕</div>
           <div class="category-text">Extensions</div>
+          <div class="category-arrow">▼</div>
+        </div>
+        <div class="category-blocks" id="extensions-blocks" style="display: none;">
+          <div class="block-item" draggable="true" data-block='{"type":"extensions","text":"HTTP request","color":"extensions","code":"fetch(url)"}'>HTTP request</div>
+          <div class="block-item" draggable="true" data-block='{"type":"extensions","text":"Save data","color":"extensions","code":"localStorage.setItem(key, value);"}'>Save data</div>
+          <div class="block-item" draggable="true" data-block='{"type":"extensions","text":"Load data","color":"extensions","code":"localStorage.getItem(key);"}'>Load data</div>
         </div>
         
-        <div class="category-item">
+        <div class="category-item" onclick="toggleCategory('advanced')">
           <div class="category-icon" style="background: #95a5a6; color: white;">▼</div>
           <div class="category-text">Advanced</div>
+          <div class="category-arrow">▼</div>
+        </div>
+        <div class="category-blocks" id="advanced-blocks" style="display: none;">
+          <div class="block-item" draggable="true" data-block='{"type":"advanced","text":"Custom function","color":"advanced","code":"function myFunction() {"}'>Custom function</div>
+          <div class="block-item" draggable="true" data-block='{"type":"advanced","text":"Class definition","color":"advanced","code":"class MyClass {"}'>Class definition</div>
+          <div class="block-item" draggable="true" data-block='{"type":"advanced","text":"Async function","color":"advanced","code":"async function myAsyncFunction() {"}'>Async function</div>
         </div>
       </div>
     </div>
@@ -1431,16 +1747,16 @@ game.loseLife();</textarea>
         runBtn.addEventListener('click', () => {
           try {
             const code = codeInput.value;
-            const originalLog = console.log;
+      const originalLog = console.log;
             let outputText = '';
             
-            console.log = function(...args) {
+      console.log = function(...args) {
               outputText += args.join(' ') + '\n';
-              originalLog.apply(console, args);
-            };
+        originalLog.apply(console, args);
+      };
             
-            eval(code);
-            console.log = originalLog;
+        eval(code);
+      console.log = originalLog;
             
             output.textContent = outputText || 'Code executed successfully!';
           } catch (error) {
@@ -1894,6 +2210,300 @@ console.log('15 / 3 =', divide(15, 3));`,
        // Debug: Check if tab buttons exist
        const tabButtons = document.querySelectorAll('.tab-btn');
        console.log('🔍 Tab buttons found:', tabButtons.length);
+
+       // Game Engine Variables
+       let gameCanvas, gameCtx;
+       let gameRunning = false;
+       let gameScore = 0;
+       let gameLives = 3;
+       let joystickX = 0;
+       let joystickY = 0;
+       let buttonA = false;
+       let buttonB = false;
+       let currentTool = 'pencil';
+       let currentColor = 'red';
+       let isDrawing = false;
+       let sprites = [];
+       let gameLoop = null;
+
+       // Initialize Game Canvas
+       function initGameCanvas() {
+         gameCanvas = document.getElementById('game-canvas');
+         gameCtx = gameCanvas.getContext('2d');
+         
+         // Set up canvas for drawing
+         gameCanvas.addEventListener('mousedown', startDrawing);
+         gameCanvas.addEventListener('mousemove', draw);
+         gameCanvas.addEventListener('mouseup', stopDrawing);
+         gameCanvas.addEventListener('mouseleave', stopDrawing);
+         
+         // Touch events for mobile
+         gameCanvas.addEventListener('touchstart', handleTouch);
+         gameCanvas.addEventListener('touchmove', handleTouch);
+         gameCanvas.addEventListener('touchend', stopDrawing);
+         
+         // Initialize joystick
+         initJoystick();
+         
+         // Initialize buttons
+         initButtons();
+         
+         // Start game loop
+         startGameLoop();
+       }
+
+       // Joystick functionality
+       function initJoystick() {
+         const joystick = document.getElementById('joystick');
+         const knob = document.getElementById('joystick-knob');
+         
+         joystick.addEventListener('mousedown', startJoystick);
+         joystick.addEventListener('mousemove', moveJoystick);
+         joystick.addEventListener('mouseup', stopJoystick);
+         joystick.addEventListener('mouseleave', stopJoystick);
+         
+         // Touch events
+         joystick.addEventListener('touchstart', startJoystick);
+         joystick.addEventListener('touchmove', moveJoystick);
+         joystick.addEventListener('touchend', stopJoystick);
+         
+         function startJoystick(e) {
+           e.preventDefault();
+           moveJoystick(e);
+         }
+         
+         function moveJoystick(e) {
+           const rect = joystick.getBoundingClientRect();
+           const centerX = rect.width / 2;
+           const centerY = rect.height / 2;
+           
+           const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+           const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+           
+           const x = clientX - rect.left - centerX;
+           const y = clientY - rect.top - centerY;
+           
+           const distance = Math.sqrt(x * x + y * y);
+           const maxDistance = centerX - 15;
+           
+           if (distance > maxDistance) {
+             const angle = Math.atan2(y, x);
+             joystickX = Math.cos(angle) * maxDistance;
+             joystickY = Math.sin(angle) * maxDistance;
+           } else {
+             joystickX = x;
+             joystickY = y;
+           }
+           
+           knob.style.transform = `translate(${joystickX}px, ${joystickY}px)`;
+         }
+         
+         function stopJoystick() {
+           joystickX = 0;
+           joystickY = 0;
+           knob.style.transform = 'translate(-50%, -50%)';
+         }
+       }
+
+       // Button functionality
+       function initButtons() {
+         const btnA = document.getElementById('btn-a');
+         const btnB = document.getElementById('btn-b');
+         
+         btnA.addEventListener('mousedown', () => { buttonA = true; });
+         btnA.addEventListener('mouseup', () => { buttonA = false; });
+         btnA.addEventListener('touchstart', (e) => { e.preventDefault(); buttonA = true; });
+         btnA.addEventListener('touchend', () => { buttonA = false; });
+         
+         btnB.addEventListener('mousedown', () => { buttonB = true; });
+         btnB.addEventListener('mouseup', () => { buttonB = false; });
+         btnB.addEventListener('touchstart', (e) => { e.preventDefault(); buttonB = true; });
+         btnB.addEventListener('touchend', () => { buttonB = false; });
+       }
+
+       // Drawing functionality
+       function selectTool(tool) {
+         currentTool = tool;
+         document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+         event.target.classList.add('active');
+       }
+
+       function selectColor(color) {
+         currentColor = color;
+         document.querySelectorAll('.color-swatch').forEach(swatch => swatch.style.border = '2px solid rgba(255, 255, 255, 0.3)');
+         event.target.style.border = '2px solid #fff';
+       }
+
+       function startDrawing(e) {
+         isDrawing = true;
+         draw(e);
+       }
+
+       function draw(e) {
+         if (!isDrawing) return;
+         
+         const rect = gameCanvas.getBoundingClientRect();
+         const x = e.clientX - rect.left;
+         const y = e.clientY - rect.top;
+         
+         gameCtx.lineWidth = 2;
+         gameCtx.lineCap = 'round';
+         gameCtx.strokeStyle = currentColor;
+         
+         if (currentTool === 'pencil') {
+           gameCtx.lineTo(x, y);
+           gameCtx.stroke();
+           gameCtx.beginPath();
+           gameCtx.moveTo(x, y);
+         } else if (currentTool === 'square') {
+           gameCtx.fillStyle = currentColor;
+           gameCtx.fillRect(x - 10, y - 10, 20, 20);
+         } else if (currentTool === 'circle') {
+           gameCtx.fillStyle = currentColor;
+           gameCtx.beginPath();
+           gameCtx.arc(x, y, 10, 0, 2 * Math.PI);
+           gameCtx.fill();
+         }
+       }
+
+       function stopDrawing() {
+         isDrawing = false;
+         gameCtx.beginPath();
+       }
+
+       function handleTouch(e) {
+         e.preventDefault();
+         const touch = e.touches[0];
+         const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+           clientX: touch.clientX,
+           clientY: touch.clientY
+         });
+         gameCanvas.dispatchEvent(mouseEvent);
+       }
+
+       // Category rollout functionality
+       window.toggleCategory = function(categoryName) {
+         const categoryItem = event.target.closest('.category-item');
+         const categoryBlocks = document.getElementById(categoryName + '-blocks');
+         
+         if (categoryBlocks.style.display === 'none') {
+           // Close all other categories
+           document.querySelectorAll('.category-blocks').forEach(blocks => {
+             blocks.style.display = 'none';
+           });
+           document.querySelectorAll('.category-item').forEach(item => {
+             item.classList.remove('expanded');
+           });
+           
+           // Open this category
+           categoryBlocks.style.display = 'block';
+           categoryItem.classList.add('expanded');
+         } else {
+           // Close this category
+           categoryBlocks.style.display = 'none';
+           categoryItem.classList.remove('expanded');
+         }
+       }
+
+       // Drag and drop functionality
+       function initDragAndDrop() {
+         document.querySelectorAll('.block-item').forEach(item => {
+           item.addEventListener('dragstart', handleDragStart);
+         });
+         
+         const workspace = document.getElementById('block-workspace');
+         workspace.addEventListener('dragover', handleDragOver);
+         workspace.addEventListener('drop', handleDrop);
+       }
+
+       function handleDragStart(e) {
+         e.dataTransfer.setData('text/plain', e.target.dataset.block);
+       }
+
+       function handleDragOver(e) {
+         e.preventDefault();
+       }
+
+       function handleDrop(e) {
+         e.preventDefault();
+         const blockData = JSON.parse(e.dataTransfer.getData('text/plain'));
+         addBlockToWorkspace(blockData);
+       }
+
+       // Game loop
+       function startGameLoop() {
+         gameRunning = true;
+         gameLoop = setInterval(() => {
+           updateGame();
+           renderGame();
+         }, 1000 / 60); // 60 FPS
+       }
+
+       function updateGame() {
+         // Update sprites based on joystick input
+         sprites.forEach(sprite => {
+           if (joystickX !== 0 || joystickY !== 0) {
+             sprite.x += joystickX * 0.1;
+             sprite.y += joystickY * 0.1;
+           }
+         });
+         
+         // Update score display
+         document.getElementById('game-score').textContent = `Score: ${gameScore}`;
+         document.getElementById('game-lives').textContent = `Lives: ${gameLives}`;
+       }
+
+       function renderGame() {
+         // Clear canvas
+         gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+         
+         // Draw sprites
+         sprites.forEach(sprite => {
+           gameCtx.fillStyle = sprite.color;
+           gameCtx.fillRect(sprite.x, sprite.y, sprite.width, sprite.height);
+         });
+       }
+
+       // Game control functions
+       window.toggleGameMenu = function() {
+         alert('Game Menu - Coming Soon!');
+       }
+
+       window.resetGame = function() {
+         gameScore = 0;
+         gameLives = 3;
+         sprites = [];
+         gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+       }
+
+       window.toggleSound = function() {
+         alert('Sound Toggle - Coming Soon!');
+       }
+
+       window.toggleFullscreen = function() {
+         alert('Fullscreen - Coming Soon!');
+       }
+
+       window.takeScreenshot = function() {
+         const link = document.createElement('a');
+         link.download = 'game-screenshot.png';
+         link.href = gameCanvas.toDataURL();
+         link.click();
+       }
+
+       window.toggleDebug = function() {
+         console.log('Game State:', {
+           score: gameScore,
+           lives: gameLives,
+           joystick: { x: joystickX, y: joystickY },
+           buttons: { A: buttonA, B: buttonB },
+           sprites: sprites.length
+         });
+       }
+
+       // Initialize everything
+       initGameCanvas();
+       initDragAndDrop();
      });
   </script>
 </body>
