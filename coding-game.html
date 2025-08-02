@@ -522,16 +522,186 @@
       align-items: center;
     }
 
-    .output-content {
-      padding: 1rem;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      line-height: 1.4;
-      background: #f8f9fa;
-      min-height: 200px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
+         .output-content {
+       padding: 1rem;
+       font-family: 'Courier New', monospace;
+       font-size: 0.9rem;
+       line-height: 1.4;
+       background: #f8f9fa;
+       min-height: 200px;
+       max-height: 400px;
+       overflow-y: auto;
+     }
+
+     /* Projects Section */
+     .projects-section {
+       background: #fff;
+       border-radius: 12px;
+       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+       padding: 1.5rem;
+       margin-top: 2rem;
+     }
+
+     .projects-title {
+       font-size: 1.3rem;
+       font-weight: 600;
+       margin-bottom: 1rem;
+       color: #2c3e50;
+     }
+
+     .project-tabs {
+       display: flex;
+       gap: 0.5rem;
+       margin-bottom: 1rem;
+       border-bottom: 2px solid #e9ecef;
+     }
+
+     .tab-btn {
+       padding: 0.75rem 1.5rem;
+       background: #f8f9fa;
+       border: none;
+       border-radius: 8px 8px 0 0;
+       cursor: pointer;
+       font-weight: 500;
+       transition: all 0.2s;
+       color: #6c757d;
+     }
+
+     .tab-btn.active {
+       background: #007bff;
+       color: white;
+     }
+
+     .tab-btn:hover:not(.active) {
+       background: #e9ecef;
+       color: #495057;
+     }
+
+     .tab-content {
+       display: none;
+     }
+
+     .tab-content.active {
+       display: block;
+     }
+
+     .projects-list {
+       max-height: 300px;
+       overflow-y: auto;
+     }
+
+     .project-item {
+       background: #f8f9fa;
+       border: 1px solid #e9ecef;
+       border-radius: 6px;
+       padding: 1rem;
+       margin-bottom: 0.5rem;
+       cursor: pointer;
+       transition: all 0.2s;
+     }
+
+     .project-item:hover {
+       background: #e9ecef;
+       transform: translateX(4px);
+     }
+
+     .project-name {
+       font-weight: 600;
+       color: #2c3e50;
+       margin-bottom: 0.25rem;
+     }
+
+     .project-info {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       margin: 0.5rem 0;
+       font-size: 0.8rem;
+       color: #7f8c8d;
+     }
+
+     .project-author {
+       font-weight: 500;
+       color: #3498db;
+     }
+     
+     .project-date {
+       color: #7f8c8d;
+       font-size: 0.8rem;
+     }
+     
+     .project-stats {
+       display: flex;
+       gap: 1rem;
+       font-size: 0.8rem;
+       color: #7f8c8d;
+     }
+     
+     .project-downloads,
+     .project-likes {
+       display: flex;
+       align-items: center;
+       gap: 0.25rem;
+     }
+
+     .project-actions {
+       margin-top: 0.5rem;
+       display: flex;
+       gap: 0.5rem;
+     }
+
+     .project-actions .btn {
+       padding: 0.25rem 0.5rem;
+       font-size: 0.8rem;
+     }
+
+     /* Modal */
+     .modal {
+       display: none;
+       position: fixed;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background: rgba(0, 0, 0, 0.5);
+       z-index: 1000;
+     }
+
+     .modal-content {
+       background: white;
+       border-radius: 12px;
+       padding: 2rem;
+       max-width: 500px;
+       margin: 10vh auto;
+       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+     }
+
+     .modal-title {
+       font-size: 1.5rem;
+       font-weight: 600;
+       margin-bottom: 1rem;
+       color: #2c3e50;
+     }
+
+     .modal-input {
+       width: 100%;
+       padding: 0.75rem;
+       border: 2px solid #e9ecef;
+       border-radius: 6px;
+       font-size: 1rem;
+       margin-bottom: 1rem;
+     }
+
+     .modal-input:focus {
+       outline: none;
+       border-color: #3498db;
+     }
+
+     .modal-buttons {
+       display: flex;
+       gap: 1rem;
+       justify-content: flex-end;
+     }
 
     /* Responsive Design */
     @media (max-width: 1200px) {
@@ -699,18 +869,18 @@
      </div>
   </div>
 
-  <!-- Text Editor (Hidden by default) -->
-  <div class="text-editor">
-    <div class="editor-section">
-      <div class="editor-header">
-        <div class="editor-title">📝 Code Editor</div>
-        <div class="editor-controls">
-          <button class="btn btn-warning" id="save-btn">💾 Save</button>
-          <button class="btn btn-success" id="publish-btn">📤 Publish</button>
-          <button class="btn btn-primary" id="run-btn">▶️ Run</button>
-        </div>
-      </div>
-      <textarea id="code-input" class="code-editor">// Welcome to the JavaScript Code Editor!
+     <!-- Text Editor (Hidden by default) -->
+   <div class="text-editor">
+     <div class="editor-section">
+       <div class="editor-header">
+         <div class="editor-title">📝 Code Editor</div>
+         <div class="editor-controls">
+           <button class="btn btn-warning" id="save-btn">💾 Save</button>
+           <button class="btn btn-success" id="publish-btn">📤 Publish</button>
+           <button class="btn btn-primary" id="run-btn">▶️ Run</button>
+         </div>
+       </div>
+       <textarea id="code-input" class="code-editor">// Welcome to the JavaScript Code Editor!
 // Write your code here and click "Run" to see the output
 
 console.log('Hello, World!');
@@ -735,18 +905,64 @@ const numbers = [1, 2, 3, 4, 5];
 const doubled = numbers.map(n => n * 2);
 console.log('Original:', numbers);
 console.log('Doubled:', doubled);</textarea>
-    </div>
+     </div>
 
-    <div class="output-section">
-      <div class="output-header">
-        <div class="editor-title">📊 Output</div>
-        <div class="editor-controls">
-          <button class="btn btn-danger" id="clear-btn">🗑️ Clear</button>
-        </div>
-      </div>
-      <div id="output" class="output-content">// Output will appear here when you run your code</div>
-    </div>
-  </div>
+     <div class="output-section">
+       <div class="output-header">
+         <div class="editor-title">📊 Output</div>
+         <div class="editor-controls">
+           <button class="btn btn-danger" id="clear-btn">🗑️ Clear</button>
+         </div>
+       </div>
+       <div id="output" class="output-content">// Output will appear here when you run your code</div>
+     </div>
+   </div>
+
+   <!-- Projects Section -->
+   <div class="projects-section">
+     <div class="projects-title">📚 Project Library</div>
+     <div class="project-tabs">
+       <button class="tab-btn active" onclick="showTab('saved')">💾 Saved Projects</button>
+       <button class="tab-btn" onclick="showTab('published')">📤 Published Projects</button>
+     </div>
+     
+     <!-- Saved Projects Tab -->
+     <div id="saved-tab" class="tab-content active">
+       <div class="editor-controls" style="margin-bottom: 1rem;">
+         <button class="btn btn-success" onclick="saveCurrentProject()">💾 Save Current</button>
+         <button class="btn btn-primary" onclick="loadSavedProjects()">📥 Load Saved</button>
+       </div>
+       <div id="saved-projects-list" class="projects-list">
+         <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+           No saved projects yet. Save your first project!
+         </div>
+       </div>
+     </div>
+
+     <!-- Published Projects Tab -->
+     <div id="published-tab" class="tab-content">
+       <div class="editor-controls" style="margin-bottom: 1rem;">
+         <button class="btn btn-primary" id="load-published-btn">📥 Load Published</button>
+       </div>
+       <div id="projects-list" class="projects-list">
+         <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+           No published projects yet. Create some code and publish it!
+         </div>
+       </div>
+     </div>
+   </div>
+
+   <!-- Save Modal -->
+   <div id="save-modal" class="modal">
+     <div class="modal-content">
+       <div class="modal-title">💾 Save Project</div>
+       <input type="text" id="project-name" class="modal-input" placeholder="Enter project name...">
+       <div class="modal-buttons">
+         <button class="btn btn-danger" id="cancel-save">Cancel</button>
+         <button class="btn btn-success" id="confirm-save">Save</button>
+       </div>
+     </div>
+   </div>
 
   <script src="js/token-manager.js"></script>
   <script src="js/project-manager.js"></script>
@@ -1118,12 +1334,215 @@ console.log('Doubled:', doubled);</textarea>
         });
       }
       
-      if (clearBtn) {
-        clearBtn.addEventListener('click', () => {
-          output.textContent = '// Output cleared';
-        });
-      }
-    });
+             if (clearBtn) {
+         clearBtn.addEventListener('click', () => {
+           output.textContent = '// Output cleared';
+         });
+       }
+
+       // Project management
+       let savedProjects = JSON.parse(localStorage.getItem('codingProjects') || '[]');
+       let publishedProjects = {};
+
+       // DOM elements for projects
+       const saveBtn = document.getElementById('save-btn');
+       const publishBtn = document.getElementById('publish-btn');
+       const loadPublishedBtn = document.getElementById('load-published-btn');
+       const saveModal = document.getElementById('save-modal');
+       const projectNameInput = document.getElementById('project-name');
+       const confirmSaveBtn = document.getElementById('confirm-save');
+       const cancelSaveBtn = document.getElementById('cancel-save');
+
+       // Save project locally
+       function saveCurrentProject() {
+         const projectName = prompt('Enter a name for your project:');
+         if (!projectName) return;
+
+         const project = {
+           name: projectName,
+           code: codeInput.value,
+           date: new Date().toISOString(),
+           id: Date.now()
+         };
+
+         savedProjects.push(project);
+         localStorage.setItem('codingProjects', JSON.stringify(savedProjects));
+         
+         alert(`Project "${projectName}" saved successfully!`);
+         loadSavedProjects();
+       }
+
+       // Load saved projects from localStorage
+       function loadSavedProjects() {
+         const savedProjectsList = document.getElementById('saved-projects-list');
+         
+         if (savedProjects.length === 0) {
+           savedProjectsList.innerHTML = `
+             <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+               No saved projects yet. Save your first project!
+             </div>
+           `;
+           return;
+         }
+
+         savedProjectsList.innerHTML = savedProjects
+           .sort((a, b) => new Date(b.date) - new Date(a.date))
+           .map(project => `
+             <div class="project-item" onclick="loadSavedProject('${project.id}')">
+               <div class="project-name">${project.name}</div>
+               <div class="project-info">
+                 <span class="project-date">Saved: ${new Date(project.date).toLocaleDateString()}</span>
+               </div>
+               <div class="project-actions">
+                 <button class="btn btn-danger" onclick="deleteSavedProject('${project.id}', event)">🗑️ Delete</button>
+               </div>
+             </div>
+           `).join('');
+       }
+
+       // Load a specific saved project
+       function loadSavedProject(projectId) {
+         const project = savedProjects.find(p => p.id == projectId);
+         if (project) {
+           codeInput.value = project.code;
+           alert(`Loaded project: ${project.name}`);
+         }
+       }
+
+       // Delete a saved project
+       function deleteSavedProject(projectId, event) {
+         event.stopPropagation();
+       
+         if (confirm('Are you sure you want to delete this project?')) {
+           savedProjects = savedProjects.filter(p => p.id != projectId);
+           localStorage.setItem('codingProjects', JSON.stringify(savedProjects));
+           loadSavedProjects();
+           alert('Project deleted successfully!');
+         }
+       }
+
+       // Publish project to cloud
+       async function publishProject() {
+         const projectName = prompt('Enter a name for your published project:');
+         if (!projectName) return;
+
+         try {
+           console.log('🔄 Publishing project:', projectName);
+           
+           const project = {
+             name: projectName,
+             code: codeInput.value,
+             description: 'JavaScript project',
+             author: 'Anonymous',
+             language: 'javascript'
+           };
+
+           const publishedProject = await window.projectManager.publishProject(project);
+           console.log('🔄 Published project response:', publishedProject);
+           
+           alert(`Project "${projectName}" published successfully to the cloud!`);
+           
+           setTimeout(() => {
+             loadPublishedProjects();
+           }, 1000);
+         } catch (error) {
+           console.error('❌ Error publishing project:', error);
+           alert('Failed to publish project. Please try again.');
+         }
+       }
+
+       // Load published projects from cloud
+       async function loadPublishedProjects() {
+         try {
+           console.log('🔄 Starting to load published projects...');
+           publishedProjects = await window.projectManager.getPublishedProjects();
+           console.log('🔄 Received projects:', publishedProjects);
+           
+           const projectIds = Object.keys(publishedProjects);
+           
+           if (projectIds.length === 0) {
+             document.getElementById('projects-list').innerHTML = `
+               <div style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                 No published projects yet. Create some code and publish it!
+               </div>
+             `;
+             return;
+           }
+
+           document.getElementById('projects-list').innerHTML = projectIds
+             .sort((a, b) => new Date(publishedProjects[b].publishedAt) - new Date(publishedProjects[a].publishedAt))
+             .map(projectId => {
+               const project = publishedProjects[projectId];
+               return `
+                 <div class="project-item" onclick="loadProject('${projectId}')">
+                   <div class="project-name">${project.name}</div>
+                   <div class="project-info">
+                     <span class="project-author">by ${project.author}</span>
+                     <span class="project-date">Published: ${new Date(project.publishedAt).toLocaleDateString()}</span>
+                   </div>
+                   <div class="project-stats">
+                     <span class="project-downloads">📥 ${project.downloads || 0}</span>
+                     <span class="project-likes">❤️ ${project.likes || 0}</span>
+                   </div>
+                 </div>
+               `;
+             }).join('');
+         } catch (error) {
+           console.error('❌ Error loading projects:', error);
+           document.getElementById('projects-list').innerHTML = `
+             <div style="text-align: center; color: #e74c3c; padding: 2rem;">
+               Error loading projects. Please try again.
+             </div>
+           `;
+         }
+       }
+
+       // Load a specific project from cloud
+       async function loadProject(projectId) {
+         const project = publishedProjects[projectId];
+         if (project) {
+           try {
+             await window.projectManager.downloadProject(projectId);
+             codeInput.value = project.code;
+             alert(`Loaded project: ${project.name}`);
+             loadPublishedProjects();
+           } catch (error) {
+             console.error('❌ Error loading project:', error);
+             codeInput.value = project.code;
+             alert(`Loaded project: ${project.name}`);
+           }
+         }
+       }
+
+       // Tab switching function
+       function showTab(tabName) {
+         document.querySelectorAll('.tab-content').forEach(tab => {
+           tab.classList.remove('active');
+         });
+         
+         document.querySelectorAll('.tab-btn').forEach(btn => {
+           btn.classList.remove('active');
+         });
+         
+         document.getElementById(tabName + '-tab').classList.add('active');
+         event.target.classList.add('active');
+         
+         if (tabName === 'saved') {
+           loadSavedProjects();
+         } else if (tabName === 'published') {
+           loadPublishedProjects();
+         }
+       }
+
+       // Event listeners
+       if (saveBtn) saveBtn.addEventListener('click', saveCurrentProject);
+       if (publishBtn) publishBtn.addEventListener('click', publishProject);
+       if (loadPublishedBtn) loadPublishedBtn.addEventListener('click', loadPublishedProjects);
+
+       // Initialize projects
+       loadSavedProjects();
+       loadPublishedProjects();
+     });
   </script>
 </body>
 </html> 
