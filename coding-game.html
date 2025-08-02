@@ -1389,8 +1389,8 @@ console.log('Doubled:', doubled);</textarea>
          loadSavedProjects();
        }
 
-       // Load saved projects from localStorage
-       function loadSavedProjects() {
+       // Load saved projects from localStorage - moved to global scope
+       window.loadSavedProjects = function() {
          const savedProjectsList = document.getElementById('saved-projects-list');
          
          if (savedProjects.length === 0) {
@@ -1417,8 +1417,8 @@ console.log('Doubled:', doubled);</textarea>
            `).join('');
        }
 
-       // Load a specific saved project
-       function loadSavedProject(projectId) {
+       // Load a specific saved project - moved to global scope
+       window.loadSavedProject = function(projectId) {
          const project = savedProjects.find(p => p.id == projectId);
          if (project) {
            codeInput.value = project.code;
@@ -1426,8 +1426,8 @@ console.log('Doubled:', doubled);</textarea>
          }
        }
 
-       // Delete a saved project
-       function deleteSavedProject(projectId, event) {
+       // Delete a saved project - moved to global scope
+       window.deleteSavedProject = function(projectId, event) {
          event.stopPropagation();
        
          if (confirm('Are you sure you want to delete this project?')) {
@@ -1468,8 +1468,8 @@ console.log('Doubled:', doubled);</textarea>
          }
        }
 
-                // Load published projects from cloud
-         async function loadPublishedProjects() {
+                       // Load published projects from cloud - moved to global scope
+       window.loadPublishedProjects = async function() {
            try {
              console.log('🔄 Starting to load published projects...');
              publishedProjects = await window.projectManager.getPublishedProjects();
@@ -1516,8 +1516,8 @@ console.log('Doubled:', doubled);</textarea>
          }
        }
 
-       // Load a specific project from cloud
-       async function loadProject(projectId) {
+       // Load a specific project from cloud - moved to global scope
+       window.loadProject = async function(projectId) {
          const project = publishedProjects[projectId];
          if (project) {
            try {
@@ -1533,8 +1533,8 @@ console.log('Doubled:', doubled);</textarea>
          }
        }
 
-       // Tab switching function
-       function showTab(tabName, event) {
+       // Tab switching function - moved to global scope
+       window.showTab = function(tabName, event) {
          document.querySelectorAll('.tab-content').forEach(tab => {
            tab.classList.remove('active');
          });
