@@ -254,6 +254,15 @@
       overflow: hidden;
     }
 
+    .workspace-header {
+      background: #fff;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     .workspace-background {
       position: absolute;
       top: 0;
@@ -860,6 +869,14 @@
 
          <!-- Coding Workspace -->
      <div class="coding-workspace">
+       <div class="workspace-header">
+         <div class="editor-title">🧩 Block Workspace</div>
+         <div class="editor-controls">
+           <button class="btn btn-warning" id="save-blocks-btn">💾 Save</button>
+           <button class="btn btn-success" id="publish-blocks-btn">📤 Publish</button>
+           <button class="btn btn-primary" id="run-blocks-btn">▶️ Run Blocks</button>
+         </div>
+       </div>
        <div class="workspace-background"></div>
        <div class="workspace-content">
          <div id="block-workspace">
@@ -1534,10 +1551,91 @@ console.log('Doubled:', doubled);</textarea>
          }
        }
 
+       // Block coding save and publish functions
+       function saveBlockProject() {
+         const projectName = prompt('Enter a name for your block project:');
+         if (!projectName) return;
+
+         const project = {
+           name: projectName,
+           type: 'blocks',
+           blocks: workspaceBlocks,
+           generatedCode: generateCodeFromBlocks(),
+           date: new Date().toISOString(),
+           id: Date.now()
+         };
+
+         savedProjects.push(project);
+         localStorage.setItem('codingProjects', JSON.stringify(savedProjects));
+         
+         alert(`Block project "${projectName}" saved successfully!`);
+         loadSavedProjects();
+       }
+
+       function publishBlockProject() {
+         const projectName = prompt('Enter a name for your published block project:');
+         if (!projectName) return;
+
+         try {
+           console.log('🔄 Publishing block project:', projectName);
+           
+           const project = {
+             name: projectName,
+             type: 'blocks',
+             blocks: workspaceBlocks,
+             code: generateCodeFromBlocks(),
+             description: 'Block coding project',
+             author: 'Anonymous',
+             language: 'javascript'
+           };
+
+           window.projectManager.publishProject(project).then(publishedProject => {
+             console.log('🔄 Published block project response:', publishedProject);
+             alert(`Block project "${projectName}" published successfully to the cloud!`);
+             
+             setTimeout(() => {
+               loadPublishedProjects();
+             }, 1000);
+           }).catch(error => {
+             console.error('❌ Error publishing block project:', error);
+             alert('Failed to publish block project. Please try again.');
+           });
+         } catch (error) {
+           console.error('❌ Error publishing block project:', error);
+           alert('Failed to publish block project. Please try again.');
+         }
+       }
+
+       function generateCodeFromBlocks() {
+         // Generate JavaScript code from the visual blocks
+         let code = '// Generated from block coding\n\n';
+         
+         workspaceBlocks.forEach(block => {
+           if (block.code) {
+             code += block.code + '\n';
+           }
+         });
+         
+         return code;
+       }
+
        // Event listeners
        if (saveBtn) saveBtn.addEventListener('click', saveCurrentProject);
        if (publishBtn) publishBtn.addEventListener('click', publishProject);
        if (loadPublishedBtn) loadPublishedBtn.addEventListener('click', loadPublishedProjects);
+
+       // Block coding event listeners
+       const saveBlocksBtn = document.getElementById('save-blocks-btn');
+       const publishBlocksBtn = document.getElementById('publish-blocks-btn');
+       const runBlocksBtn = document.getElementById('run-blocks-btn');
+
+       if (saveBlocksBtn) saveBlocksBtn.addEventListener('click', saveBlockProject);
+       if (publishBlocksBtn) publishBlocksBtn.addEventListener('click', publishBlockProject);
+       if (runBlocksBtn) runBlocksBtn.addEventListener('click', () => {
+         const code = generateCodeFromBlocks();
+         codeInput.value = code;
+         runCode();
+       });
 
        // Initialize projects
        loadSavedProjects();

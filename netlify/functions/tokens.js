@@ -1,17 +1,6 @@
 // In-memory storage for tokens (will reset when function restarts)
 let tokenStorage = {};
 
-// Load tokens from memory
-function loadTokens() {
-  return tokenStorage;
-}
-
-// Save tokens to memory
-function saveTokens(tokens) {
-  tokenStorage = tokens;
-  return true;
-}
-
 exports.handler = async function(event, context) {
   // Enable CORS
   const headers = {
@@ -50,13 +39,11 @@ exports.handler = async function(event, context) {
       };
     }
 
-    const tokens = loadTokens();
-
     if (event.httpMethod === 'GET') {
       // Get tokens for user
       console.log('🔄 GET request - email:', email);
-      console.log('🔄 All tokens from file:', tokens);
-      const userTokens = tokens[email] || 10; // Default 10 tokens for new users
+      console.log('🔄 All tokens from storage:', tokenStorage);
+      const userTokens = tokenStorage[email] || 10; // Default 10 tokens for new users
       console.log('🔄 User tokens for', email, ':', userTokens);
       return {
         statusCode: 200,
@@ -68,7 +55,7 @@ exports.handler = async function(event, context) {
       const { tokens: newTokenCount } = JSON.parse(event.body);
       
       console.log('🔄 POST request - email:', email, 'newTokenCount:', newTokenCount);
-      console.log('🔄 Current tokens before update:', tokens);
+      console.log('🔄 Current tokens before update:', tokenStorage);
       
       if (typeof newTokenCount !== 'number' || newTokenCount < 0) {
         return {
@@ -78,20 +65,9 @@ exports.handler = async function(event, context) {
         };
       }
 
-      tokens[email] = newTokenCount;
-      console.log('🔄 Updated tokens object:', tokens);
-      
-      try {
-        saveTokens(tokens);
-        console.log('✅ Tokens saved successfully');
-      } catch (saveError) {
-        console.error('❌ Error saving tokens:', saveError);
-        return {
-          statusCode: 500,
-          headers,
-          body: JSON.stringify({ error: 'Failed to save tokens' })
-        };
-      }
+      tokenStorage[email] = newTokenCount;
+      console.log('🔄 Updated tokens object:', tokenStorage);
+      console.log('✅ Tokens saved successfully');
 
       return {
         statusCode: 200,
