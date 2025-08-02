@@ -939,8 +939,8 @@ console.log('Doubled:', doubled);</textarea>
    <div class="projects-section">
      <div class="projects-title">📚 Project Library</div>
      <div class="project-tabs">
-       <button class="tab-btn active" onclick="showTab('saved')">💾 Saved Projects</button>
-       <button class="tab-btn" onclick="showTab('published')">📤 Published Projects</button>
+       <button class="tab-btn active" onclick="showTab('saved', event)">💾 Saved Projects</button>
+       <button class="tab-btn" onclick="showTab('published', event)">📤 Published Projects</button>
      </div>
      
      <!-- Saved Projects Tab -->
@@ -1532,7 +1532,7 @@ console.log('Doubled:', doubled);</textarea>
        }
 
        // Tab switching function
-       function showTab(tabName) {
+       function showTab(tabName, event) {
          document.querySelectorAll('.tab-content').forEach(tab => {
            tab.classList.remove('active');
          });
@@ -1542,7 +1542,9 @@ console.log('Doubled:', doubled);</textarea>
          });
          
          document.getElementById(tabName + '-tab').classList.add('active');
-         event.target.classList.add('active');
+         if (event && event.target) {
+           event.target.classList.add('active');
+         }
          
          if (tabName === 'saved') {
            loadSavedProjects();
@@ -1640,6 +1642,18 @@ console.log('Doubled:', doubled);</textarea>
        // Initialize projects
        loadSavedProjects();
        loadPublishedProjects();
+       
+       // Debug: Check if project manager is loaded
+       console.log('🔍 Project Manager loaded:', window.projectManager);
+       console.log('🔍 Token Manager loaded:', window.tokenManager);
+       
+       // Debug: Check if projects section exists
+       const projectsSection = document.querySelector('.projects-section');
+       console.log('🔍 Projects section found:', projectsSection);
+       
+       // Debug: Check if tab buttons exist
+       const tabButtons = document.querySelectorAll('.tab-btn');
+       console.log('🔍 Tab buttons found:', tabButtons.length);
      });
   </script>
 </body>
