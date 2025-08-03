@@ -475,24 +475,32 @@
        border-left: 3px solid rgba(255, 255, 255, 0.2);
        max-height: 300px;
        overflow-y: auto;
+       display: none;
+     }
+
+     .category-blocks[style*="display: block"] {
+       display: block !important;
      }
 
      .category-blocks .block-item {
-       background: rgba(255, 255, 255, 0.1);
-       border: 1px solid rgba(255, 255, 255, 0.2);
+       background: #f8f9fa;
+       border: 1px solid #e9ecef;
        border-radius: 6px;
-       padding: 0.5rem;
-       margin: 0.25rem 0;
+       padding: 0.75rem;
+       margin: 0.5rem 0;
        cursor: grab;
        transition: all 0.2s ease;
-       font-size: 0.85rem;
-       color: #fff;
+       font-size: 0.9rem;
+       color: #333;
        display: block;
+       font-weight: 500;
+       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
      }
 
      .category-blocks .block-item:hover {
-       background: rgba(255, 255, 255, 0.2);
+       background: #e9ecef;
        transform: translateX(4px);
+       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
      }
 
      .category-blocks .block-item:active {
@@ -2433,10 +2441,22 @@ console.log('15 / 3 =', divide(15, 3));`,
 
        // Category rollout functionality
        window.toggleCategory = function(categoryName) {
+         console.log('🔄 Toggle category:', categoryName);
+         
          const categoryItem = event.target.closest('.category-item');
          const categoryBlocks = document.getElementById(categoryName + '-blocks');
          
+         console.log('🔄 Category item found:', categoryItem);
+         console.log('🔄 Category blocks found:', categoryBlocks);
+         
+         if (!categoryBlocks) {
+           console.error('❌ Category blocks not found for:', categoryName);
+           return;
+         }
+         
          if (categoryBlocks.style.display === 'none') {
+           console.log('🔄 Opening category:', categoryName);
+           
            // Close all other categories
            document.querySelectorAll('.category-blocks').forEach(blocks => {
              blocks.style.display = 'none';
@@ -2448,10 +2468,16 @@ console.log('15 / 3 =', divide(15, 3));`,
            // Open this category
            categoryBlocks.style.display = 'block';
            categoryItem.classList.add('expanded');
+           
+           console.log('✅ Category opened successfully');
          } else {
+           console.log('🔄 Closing category:', categoryName);
+           
            // Close this category
            categoryBlocks.style.display = 'none';
            categoryItem.classList.remove('expanded');
+           
+           console.log('✅ Category closed successfully');
          }
        }
 
